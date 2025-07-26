@@ -1,103 +1,167 @@
-import Image from "next/image";
+import Head from 'next/head';
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="./next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <>
+      <Head>
+        <title>Handcrafted Haven - Virtual Marketplace for Artisans</title>
+        <meta name="description" content="Discover unique handcrafted items from talented artisans. Connect creators with conscious consumers in our virtual marketplace." />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+      </Head>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="./file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="./window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="./globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      <div className="bg-[#F9F5F0] text-[#333333] min-h-screen">
+        {/* Navigation */}
+        <nav className="bg-white shadow-md">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold text-[#6B4F3B]" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Handcrafted Haven
+              </h1>
+              <div className="flex space-x-4">
+                <input 
+                  type="text" 
+                  placeholder="Search handcrafted items..." 
+                  className="px-4 py-2 border border-[#E8C07D] rounded-lg focus:outline-none focus:border-[#6B4F3B]" 
+                />
+                <button className="bg-[#6B4F3B] text-white px-6 py-2 rounded-lg hover:bg-[#5a4332] transition-colors">
+                  Explore
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        {/* Hero Section */}
+        <section className="bg-gradient-to-b from-[#E8C07D] to-[#F9F5F0] py-16">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-5xl font-bold text-[#6B4F3B] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Where Artisans & Craft Lovers Connect
+            </h2>
+            <p className="text-xl text-[#333333] mb-8 max-w-3xl mx-auto leading-relaxed">
+              Discover unique handcrafted treasures from talented creators worldwide. 
+              Handcrafted Haven is your virtual marketplace that connects passionate artisans 
+              with conscious consumers who appreciate the beauty and quality of handmade products.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="bg-[#6B4F3B] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#5a4332] transition-colors">
+                Shop Handcrafted Items
+              </button>
+              <button className="bg-white border-2 border-[#6B4F3B] text-[#6B4F3B] px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#6B4F3B] hover:text-white transition-colors">
+                Become a Seller
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <h3 className="text-4xl font-bold text-center text-[#6B4F3B] mb-12" style={{ fontFamily: "'Playfair Display', serif" }}>
+              What Makes Us Special
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Seller Profiles */}
+              <div className="bg-white rounded-lg shadow-md p-6 text-center">
+                <div className="w-16 h-16 bg-[#E8C07D] rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl">👤</span>
+                </div>
+                <h4 className="text-xl font-bold text-[#6B4F3B] mb-3">Artisan Profiles</h4>
+                <p className="text-[#333333]">
+                  Dedicated profiles for authenticated sellers to showcase their craftsmanship, 
+                  share their stories, and display curated collections of handcrafted items.
+                </p>
+              </div>
+
+              {/* Product Listings */}
+              <div className="bg-white rounded-lg shadow-md p-6 text-center">
+                <div className="w-16 h-16 bg-[#E8C07D] rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl">🛍️</span>
+                </div>
+                <h4 className="text-xl font-bold text-[#6B4F3B] mb-3">Curated Marketplace</h4>
+                <p className="text-[#333333]">
+                  Browse through our catalog of unique handcrafted items. Filter by category, 
+                  price range, or other criteria to find exactly what you're looking for.
+                </p>
+              </div>
+
+              {/* Reviews */}
+              <div className="bg-white rounded-lg shadow-md p-6 text-center">
+                <div className="w-16 h-16 bg-[#E8C07D] rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl">⭐</span>
+                </div>
+                <h4 className="text-xl font-bold text-[#6B4F3B] mb-3">Reviews & Ratings</h4>
+                <p className="text-[#333333]">
+                  Share your experience and help others discover amazing products. 
+                  Leave ratings and written reviews for items you've purchased.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Mission Section */}
+        <section className="bg-[#6B4F3B] text-white py-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <h3 className="text-4xl font-bold mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Our Mission
+              </h3>
+              <p className="text-lg leading-relaxed mb-6">
+                Handcrafted Haven aims to revolutionize the way handcrafted items are discovered, 
+                appreciated, and acquired. We foster a thriving community of passionate creators and 
+                conscious consumers by providing a digital platform that supports local artisans and 
+                promotes sustainable consumption.
+              </p>
+              <p className="text-lg leading-relaxed">
+                With user-friendly features, secure e-commerce capabilities, and emphasis on 
+                customization and community engagement, we're becoming the go-to destination 
+                for those seeking unique, handcrafted treasures.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Call to Action */}
+        <section className="bg-[#E8C07D] py-16">
+          <div className="container mx-auto px-4 text-center">
+            <h3 className="text-4xl font-bold text-[#6B4F3B] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Join Our Community Today
+            </h3>
+            <p className="text-xl text-[#333333] mb-8 max-w-2xl mx-auto">
+              Whether you're an artisan looking to showcase your work or someone who appreciates 
+              the beauty of handcrafted items, there's a place for you at Handcrafted Haven.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="bg-[#6B4F3B] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#5a4332] transition-colors">
+                Start Shopping
+              </button>
+              <button className="bg-white border-2 border-[#6B4F3B] text-[#6B4F3B] px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#6B4F3B] hover:text-white transition-colors">
+                Join as Artisan
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-[#333333] text-white py-8">
+          <div className="container mx-auto px-4 text-center">
+            <div className="mb-4">
+              <h4 className="text-2xl font-bold text-[#E8C07D]" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Handcrafted Haven
+              </h4>
+            </div>
+            <p className="text-gray-300 mb-4">
+              Connecting artisans with conscious consumers, one handcrafted item at a time.
+            </p>
+            <div className="flex justify-center space-x-6 text-sm">
+              <a href="#" className="hover:text-[#E8C07D] transition-colors">About</a>
+              <a href="#" className="hover:text-[#E8C07D] transition-colors">Contact</a>
+              <a href="#" className="hover:text-[#E8C07D] transition-colors">Privacy</a>
+              <a href="#" className="hover:text-[#E8C07D] transition-colors">Terms</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </>
   );
 }
