@@ -86,7 +86,7 @@ export default function Home() {
               <p className="text-[#333333]">
                 Browse through our catalog of unique handcrafted items. Filter
                 by category, price range, or other criteria to find exactly what
-                you're looking for.
+                you&apos;re looking for.
               </p>
             </div>
 
@@ -100,7 +100,7 @@ export default function Home() {
               </h4>
               <p className="text-[#333333]">
                 Share your experience and help others discover amazing products.
-                Leave ratings and written reviews for items you've purchased.
+                Leave ratings and written reviews for items you&apos;ve purchased.
               </p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function Home() {
             </p>
             <p className="text-lg leading-relaxed">
               With user-friendly features, secure e-commerce capabilities, and
-              emphasis on customization and community engagement, we're becoming
+              emphasis on customization and community engagement, we&apos;re becoming
               the go-to destination for those seeking unique, handcrafted
               treasures.
             </p>
@@ -136,8 +136,8 @@ export default function Home() {
             Join Our Community Today
           </h3>
           <p className="text-xl text-[#333333] mb-8 max-w-2xl mx-auto">
-            Whether you're an artisan looking to showcase your work or someone
-            who appreciates the beauty of handcrafted items, there's a place for
+            Whether you&apos;re an artisan looking to showcase your work or someone
+            who appreciates the beauty of handcrafted items, there&apos;s a place for
             you at Handcrafted Haven.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
