@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {Metadata} from "next";
+import LinkButton from "@/components/ui/LinkButton";
 
 export const metadata: Metadata = {
     title: "Handcrafted Haven - Virtual Marketplace for Artisans",
@@ -42,11 +43,7 @@ export default function About() {
                     </div>
                 </section>
                 <div className="flex justify-center mt-8">
-                    <Link
-                        href="/"
-                        className="bg-[#6B4F3B] text-white px-6 py-2 rounded shadow hover:bg-[#543c2a] transition">
-                        Back to Home
-                    </Link>
+                    <LinkButton text="Back to Home" />
                 </div>
             </div>
         </div>
