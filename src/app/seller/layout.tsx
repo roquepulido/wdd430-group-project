@@ -4,8 +4,7 @@ import React from "react";
 import AuthProtected from "@/components/auth/AuthProtected";
 
 export const metadata: Metadata = {
-    title: "Handcrafted Haven",
-    description: "Discover unique handmade crafts and artisan products",
+    title: "Seller"
 };
 
 export default function RootLayout({

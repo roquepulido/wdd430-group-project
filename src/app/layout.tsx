@@ -17,7 +17,10 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-    title: "Handcrafted Haven",
+    title: {
+        default: "Handcrafted Haven",
+        template: "%s | Handcrafted Haven",
+    },
     description: "Discover unique handmade crafts and artisan products",
 };
 

@@ -1,10 +1,4 @@
-import { Metadata } from "next";
 import LinkButton from "@/components/ui/LinkButton";
-
-export const metadata: Metadata = {
-    title: "Seller Registration - Handcrafted Haven",
-    description: "Register as a seller and start uploading your unique handcrafted products.",
-};
 
 export default function SellerRegister() {
     return (

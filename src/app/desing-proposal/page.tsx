@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title:"Handcrafted Haven - Design Proposal"
+  title:"Design Proposal",
+    description: "Design proposal for Handcrafted Haven e-commerce platform",
 };
 
 export default function DesignProposal() {

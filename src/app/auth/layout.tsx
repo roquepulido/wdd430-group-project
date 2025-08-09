@@ -2,8 +2,7 @@ import type {Metadata} from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-    title: "Handcrafted Haven",
-    description: "Discover unique handmade crafts and artisan products",
+    title: "Authentication"
 };
 
 export default function RootLayout({
