@@ -1,6 +1,7 @@
 import type {Metadata} from "next";
 import React from "react";
 import Link from "next/link";
+import SellerAuthButton from "@/components/ui/SellerAuthButton";
 
 export const metadata: Metadata = {
     title: "Handcrafted Haven",
@@ -21,7 +22,7 @@ export default function RootLayout({
                         <h1 className="text-2xl font-bold text-[#6B4F3B]">
                             <Link href="/">Handcrafted Haven</Link>
                         </h1>
-                        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2 sm:gap-4">
+                        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2 sm:gap-4 items-center">
                             <input
                                 type="text"
                                 placeholder="Search handcrafted items..."
@@ -31,6 +32,8 @@ export default function RootLayout({
                                 className="bg-[#6B4F3B] text-white px-6 py-2 rounded-lg hover:bg-[#5a4332] transition-colors w-full sm:w-auto">
                                 Explore
                             </button>
+
+                            <SellerAuthButton/>
                         </div>
                     </div>
                 </div>

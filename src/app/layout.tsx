@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import {Playfair_Display, Lato} from "next/font/google";
 import "./globals.css";
 import React from "react";
+import AuthProvider from "@/components/auth/SessionProvider";
 
 const playfairDisplay = Playfair_Display({
     subsets: ["latin"],
@@ -26,10 +27,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
-        <body className={`${playfairDisplay.variable} ${lato.variable}`}>
-        {children}
-        </body>
-        </html>
+        <AuthProvider>
+            <html lang="en">
+            <body className={`${playfairDisplay.variable} ${lato.variable}`}>
+            {children}
+            </body>
+            </html>
+        </AuthProvider>
     );
 }

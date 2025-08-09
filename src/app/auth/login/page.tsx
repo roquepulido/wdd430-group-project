@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import LinkButton from "@/components/ui/LinkButton";
 
 export default function SellerLogin() {
   const [email, setEmail] = useState("");
@@ -8,11 +10,14 @@ export default function SellerLogin() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulación de login sencillo
-    if (email === "email@test.com" && password === "password") {
-      setError("");
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    if (res?.ok) {
       router.push("/seller");
     } else {
       setError("Invalid email or password");
@@ -43,13 +48,15 @@ export default function SellerLogin() {
           {error && <div className="text-red-600 text-sm">{error}</div>}
           <button
             type="submit"
-            className="bg-[#6B4F3B] text-white px-4 py-2 rounded hover:bg-[#543c2a] font-bold"
+            className="bg-[#E8C07D] text-[#6B4F3B] px-4 py-2 rounded hover:bg-[#d6a74e] font-bold"
           >
             Login
           </button>
         </form>
+        <div className="flex justify-center mt-4">
+          <LinkButton>Back to Home</LinkButton>
+        </div>
       </div>
     </div>
   );
 }
-
