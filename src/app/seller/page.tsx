@@ -1,13 +1,28 @@
 'use client';
 import Link from "next/link";
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import ProductModal from "@/components/ui/ProductModal";
+import {Product, Seller} from "@/types";
 
 export default function SellerDashboard() {
     const [showProductModal, setShowProductModal] = useState(false);
-    const [editProduct, setEditProduct] = useState(null);
+    const [editProduct, setEditProduct] = useState<Product>({
+        name: "",
+        description: "",
+        price: 0,
+        category: "",
+        image: ""
+    });
+    const [profile, setProfile] = useState<Seller>({
+        fullName: "",
+        email: "",
+        shopName: "",
+        description: "",
+        image: ""
+    });
 
     const handleAddProduct = () => {
-        setEditProduct(null);
+        setEditProduct({} as Product);
         setShowProductModal(true);
     };
     const handleEditProduct = (product: any) => {
@@ -16,14 +31,48 @@ export default function SellerDashboard() {
     };
     const handleCloseModal = () => {
         setShowProductModal(false);
-        setEditProduct(null);
+        setEditProduct({} as Product);
     };
+    const handleProductSubmit = (prod: Product) => {
+        console.log(prod)
+        handleCloseModal();
+    };
+
+    const loadProfile = () => {
+        // TODO change this to fetch from an API
+        setProfile(profileSeller);
+    }
+
 
     // Example products
     const products = [
-        { id: 1, name: "Wooden Bowl", price: 25, image: "", description: "Handcrafted wooden bowl." },
-        { id: 2, name: "Handmade Mug", price: 18, image: "", description: "Ceramic mug." },
+        {
+            id: 1,
+            name: "Wooden Bowl",
+            price: 25,
+            image: "https://picsum.photos/100?random=1",
+            description: "Handcrafted wooden bowl."
+        },
+        {
+            id: 2,
+            name: "Handmade Mug",
+            price: 18,
+            image: "https://picsum.photos/100?random=2",
+            description: "Ceramic mug."
+        },
     ];
+
+    const profileSeller: Seller = {
+        fullName: "Jane Doe",
+        email: "email@test.com",
+        shopName: "Jane's Woodworks",
+        description: "Woodworking artisan passionate about sustainable decor.",
+        image: "https://picsum.photos/100?random=3"
+    }
+
+    useEffect(() => {
+        loadProfile();
+    }, []);
 
     return (
         <div className="bg-[#F9F5F0] text-[#333333] min-h-screen">
@@ -37,53 +86,101 @@ export default function SellerDashboard() {
                     <section className="bg-white p-8 rounded-lg shadow-md">
                         <h2 className="text-2xl font-bold mb-4 text-[#6B4F3B]">Profile Information</h2>
                         <form className="flex flex-col gap-4 mb-4">
-                            <input type="text" placeholder="Full Name" className="border rounded px-3 py-2" defaultValue="Jane Doe" />
-                            <input type="email" placeholder="Email" className="border rounded px-3 py-2" defaultValue="jane@email.com" />
-                            <input type="text" placeholder="Shop Name" className="border rounded px-3 py-2" defaultValue="Jane's Woodworks" />
-                            <textarea placeholder="Short Bio / Description" className="border rounded px-3 py-2" rows={3} defaultValue="Woodworking artisan passionate about sustainable decor." />
-                            <button type="submit" className="bg-[#6B4F3B] text-white px-4 py-2 rounded hover:bg-[#543c2a]">Update Profile</button>
+                            <div className="flex flex-col items-center relative mb-2">
+                                {profile.image ? (
+                                    <img src={profile.image} alt="Shop Logo"
+                                         className="w-24 h-24 object-cover rounded-full border mx-auto"/>
+                                ) : (
+                                    <div
+                                        className="w-24 h-24 bg-[#E8C07D] rounded-full flex items-center justify-center text-[#6B4F3B] mx-auto">No
+                                        Logo</div>
+                                )}
+                                <label
+                                    className="absolute top-2 right-2 cursor-pointer bg-white rounded-full p-1 shadow hover:bg-[#E8C07D] transition"
+                                    title="Change logo">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         strokeWidth={1.5} stroke="#6B4F3B" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                              d="M16.862 4.487a2.25 2.25 0 1 1 3.182 3.182l-9.193 9.193a4.5 4.5 0 0 1-1.897 1.13l-3.06.918.918-3.06a4.5 4.5 0 0 1 1.13-1.897l9.193-9.193z"/>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 6.75l-1.5-1.5"/>
+                                    </svg>
+                                    <input type="file" accept="image/*" className="hidden" onChange={e => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onload = (ev) => {
+                                                setProfile(prev => ({...prev, image: ev.target?.result as string}));
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}/>
+                                </label>
+                            </div>
+                            <input type="text" placeholder="Full Name" className="border rounded px-3 py-2"
+                                   value={profile.fullName}
+                                   onChange={e => setProfile(prev => ({...prev, fullName: e.target.value}))}/>
+                            <input type="email" placeholder="Email" className="border rounded px-3 py-2"
+                                   value={profile.email}
+                                   onChange={e => setProfile(prev => ({...prev, email: e.target.value}))}/>
+                            <input type="text" placeholder="Shop Name" className="border rounded px-3 py-2"
+                                   value={profile.shopName}
+                                   onChange={e => setProfile(prev => ({...prev, shopName: e.target.value}))}/>
+                            <textarea placeholder="Short Bio / Description" className="border rounded px-3 py-2"
+                                      rows={3} value={profile.description}
+                                      onChange={e => setProfile(prev => ({...prev, description: e.target.value}))}/>
+                            <button type="button"
+                                    className="bg-[#6B4F3B] text-white px-4 py-2 rounded hover:bg-[#543c2a]"
+                                    onClick={() => {/* TODO Aquí podrías guardar la info en backend */
+                                    }}>Update
+                                Profile
+                            </button>
                         </form>
                     </section>
                     {/* Products Section */}
                     <section className="bg-white p-8 rounded-lg shadow-md flex flex-col">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-2xl font-bold text-[#6B4F3B]">Your Products</h2>
-                            <button onClick={handleAddProduct} className="bg-[#E8C07D] text-[#333333] px-4 py-2 rounded shadow hover:bg-[#cfa44e] font-bold">Add New Product</button>
+                            <button onClick={handleAddProduct}
+                                    className="bg-[#E8C07D] text-[#333333] px-4 py-2 rounded shadow hover:bg-[#cfa44e] font-bold">Add
+                                New Product
+                            </button>
                         </div>
                         {/* Product list */}
                         <div className="flex flex-col gap-4">
                             {products.map((product) => (
                                 <div key={product.id} className="border rounded-lg p-4 flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-[#E8C07D] rounded"></div>
+                                    {product.image ? (
+                                        <img
+                                            src={product.image}
+                                            alt={product.name}
+                                            className="w-16 h-16 object-cover rounded"
+                                        />
+                                    ) : (
+                                        <div className="w-16 h-16 bg-[#E8C07D] rounded"></div>
+                                    )}
                                     <div className="flex-1">
                                         <h3 className="font-bold text-lg">{product.name}</h3>
                                         <p className="text-sm text-[#6B4F3B]">${product.price}.00</p>
                                     </div>
-                                    <button className="text-[#6B4F3B] underline" onClick={() => handleEditProduct(product)}>Edit</button>
+                                    <button className="text-[#6B4F3B] underline"
+                                            onClick={() => handleEditProduct(product)}>Edit
+                                    </button>
                                 </div>
                             ))}
                         </div>
                     </section>
                 </div>
                 {/* Product Modal */}
-                {showProductModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
-                            <button onClick={handleCloseModal} className="absolute top-2 right-2 text-[#6B4F3B] text-2xl">&times;</button>
-                            <h2 className="text-2xl font-bold mb-4 text-[#6B4F3B]">{editProduct ? 'Edit Product' : 'Add Product'}</h2>
-                            <form className="flex flex-col gap-4">
-                                <input type="text" placeholder="Product Name" className="border rounded px-3 py-2" defaultValue={editProduct?.name || ''} required />
-                                <textarea placeholder="Description" className="border rounded px-3 py-2" rows={3} defaultValue={editProduct?.description || ''} required></textarea>
-                                <input type="number" placeholder="Price (USD)" className="border rounded px-3 py-2" defaultValue={editProduct?.price || ''} required min="0" step="0.01" />
-                                <input type="text" placeholder="Category" className="border rounded px-3 py-2" required />
-                                <input type="file" className="border rounded px-3 py-2" accept="image/*" />
-                                <button type="submit" className="bg-[#E8C07D] text-[#333333] px-4 py-2 rounded hover:bg-[#cfa44e] font-bold">{editProduct ? 'Update' : 'Add'} Product</button>
-                            </form>
-                        </div>
-                    </div>
-                )}
+                <ProductModal
+                    show={showProductModal}
+                    onClose={handleCloseModal}
+                    onSubmit={handleProductSubmit}
+                    product={editProduct}
+                />
                 <div className="flex justify-center mt-8">
-                    <Link href="/" className="bg-[#6B4F3B] text-white px-6 py-2 rounded shadow hover:bg-[#543c2a] transition">Back to Home</Link>
+                    <Link href="/"
+                          className="bg-[#6B4F3B] text-white px-6 py-2 rounded shadow hover:bg-[#543c2a] transition">Back
+                        to Home</Link>
                 </div>
             </div>
         </div>

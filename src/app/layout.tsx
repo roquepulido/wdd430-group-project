@@ -1,6 +1,7 @@
 import type {Metadata} from "next";
 import {Playfair_Display, Lato} from "next/font/google";
 import "./globals.css";
+import React from "react";
 
 const playfairDisplay = Playfair_Display({
     subsets: ["latin"],

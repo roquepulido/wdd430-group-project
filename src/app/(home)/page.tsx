@@ -26,7 +26,7 @@ export default function Home() {
                             className="bg-[#6B4F3B] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#5a4332] transition-colors">
                             Shop Handcrafted Items
                         </button>
-                        <a href="/register"
+                        <a href="auth/register"
                            className="bg-white border-2 border-[#6B4F3B] text-[#6B4F3B] px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#6B4F3B] hover:text-white transition-colors">
                             Become a Seller
                         </a>
@@ -129,7 +129,7 @@ export default function Home() {
                             className="bg-[#6B4F3B] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#5a4332] transition-colors">
                             Start Shopping
                         </button>
-                        <a href="register"
+                        <a href="auth/register"
                             className="bg-white border-2 border-[#6B4F3B] text-[#6B4F3B] px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#6B4F3B] hover:text-white transition-colors">
                             Join as Artisan
                         </a>
