@@ -1,4 +1,6 @@
 import type {Metadata} from "next";
+import React from "react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Handcrafted Haven",
@@ -17,7 +19,7 @@ export default function RootLayout({
                 <div className="container mx-auto px-4 py-4">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <h1 className="text-2xl font-bold text-[#6B4F3B]">
-                            <a href="/">Handcrafted Haven</a>
+                            <Link href="/">Handcrafted Haven</Link>
                         </h1>
                         <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2 sm:gap-4">
                             <input

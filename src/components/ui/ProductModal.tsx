@@ -4,7 +4,7 @@ import {Product} from "@/types";
 interface ProductModalProps {
     show: boolean;
     onClose: () => void;
-    onSubmit: (product: Product) => void;
+    onSubmit: (product: FormData) => void;
     product?: Product;
 }
 
@@ -39,7 +39,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ show, onClose, onSubmit, pr
         if (imageFile) {
             formData.append("image", imageFile);
         }
-        if (onSubmit) onSubmit(formData as any); // Ajusta según tu backend
+        if (onSubmit) onSubmit(formData as FormData); // Ajusta según tu backend
         onClose();
     };
 

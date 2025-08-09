@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {Metadata} from "next";
 import LinkButton from "@/components/ui/LinkButton";
 
@@ -35,7 +34,7 @@ export default function About() {
                             thrives.
                         </p>
                         <p>
-                            Whether you're an artisan looking to share your work or a craft
+                            Whether you&apos;re an artisan looking to share your work or a craft
                             enthusiast seeking one-of-a-kind treasures, Handcrafted Haven is the
                             perfect place to connect, explore, and celebrate the world of
                             handmade crafts.

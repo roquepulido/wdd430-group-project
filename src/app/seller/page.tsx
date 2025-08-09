@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 import ProductModal from "@/components/ui/ProductModal";
 import {Product, Seller} from "@/types";
+import Image from "next/image";
 
 export default function SellerDashboard() {
     const [showProductModal, setShowProductModal] = useState(false);
@@ -25,7 +26,7 @@ export default function SellerDashboard() {
         setEditProduct({} as Product);
         setShowProductModal(true);
     };
-    const handleEditProduct = (product: any) => {
+    const handleEditProduct = (product: Product) => {
         setEditProduct(product);
         setShowProductModal(true);
     };
@@ -33,7 +34,7 @@ export default function SellerDashboard() {
         setShowProductModal(false);
         setEditProduct({} as Product);
     };
-    const handleProductSubmit = (prod: Product) => {
+    const handleProductSubmit = (prod: FormData) => {
         console.log(prod)
         handleCloseModal();
     };
@@ -50,6 +51,7 @@ export default function SellerDashboard() {
             id: 1,
             name: "Wooden Bowl",
             price: 25,
+            category: "Kitchenware",
             image: "https://picsum.photos/100?random=1",
             description: "Handcrafted wooden bowl."
         },
@@ -57,6 +59,7 @@ export default function SellerDashboard() {
             id: 2,
             name: "Handmade Mug",
             price: 18,
+            category: "Ceramics",
             image: "https://picsum.photos/100?random=2",
             description: "Ceramic mug."
         },
@@ -88,7 +91,7 @@ export default function SellerDashboard() {
                         <form className="flex flex-col gap-4 mb-4">
                             <div className="flex flex-col items-center relative mb-2">
                                 {profile.image ? (
-                                    <img src={profile.image} alt="Shop Logo"
+                                    <Image src={profile.image} alt="Shop Logo"
                                          className="w-24 h-24 object-cover rounded-full border mx-auto"/>
                                 ) : (
                                     <div
@@ -150,7 +153,7 @@ export default function SellerDashboard() {
                             {products.map((product) => (
                                 <div key={product.id} className="border rounded-lg p-4 flex items-center gap-4">
                                     {product.image ? (
-                                        <img
+                                        <Image
                                             src={product.image}
                                             alt={product.name}
                                             className="w-16 h-16 object-cover rounded"
