@@ -1,11 +1,16 @@
 import type { NextConfig } from "next";
 
- const nextConfig: NextConfig = {
- };
-//   /* config options here */
-//   basePath: '/wdd430-group-project',
-//   assetPrefix: '/wdd430-group-project/',
-//   output: 'export'
-// };
+const nextConfig: NextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'picsum.photos',
+                port: '',
+                pathname: '/**',
+            },
+        ],
+    },
+};
 
 export default nextConfig;

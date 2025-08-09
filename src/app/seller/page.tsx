@@ -92,6 +92,7 @@ export default function SellerDashboard() {
                             <div className="flex flex-col items-center relative mb-2">
                                 {profile.image ? (
                                     <Image src={profile.image} alt="Shop Logo"
+                                            width={96} height={96}
                                          className="w-24 h-24 object-cover rounded-full border mx-auto"/>
                                 ) : (
                                     <div
@@ -157,6 +158,8 @@ export default function SellerDashboard() {
                                             src={product.image}
                                             alt={product.name}
                                             className="w-16 h-16 object-cover rounded"
+                                            width={64}
+                                            height={64}
                                         />
                                     ) : (
                                         <div className="w-16 h-16 bg-[#E8C07D] rounded"></div>
