@@ -62,35 +62,77 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
         }
     };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setImageFile(e.target.files[0]);
+    // Cambia la lógica: si es nuevo producto, solo guarda el file en state; si es update, sube/cambia al instante
+    const handleImageChange = async (file: File) => {
+        if (!file) return;
+        if (!product?.id || product.id === 0) {
+            // Producto nuevo: solo guarda el file, la imagen se sube al submit
+            setImageFile(file);
+            setForm(prev => ({...prev, image: ''}));
+        } else {
+            // Producto existente: subir/cambiar al instante (como antes)
+            let prevImageUrl = form.image;
+            let newImageUrl = "";
+            try {
+                const ext = file.name.split('.').pop();
+                const uuidName = `${crypto.randomUUID()}.${ext}`;
+                const uploadRes = await fetch(`/api/blob?filename=${uuidName}`, {
+                    method: 'POST',
+                    body: file,
+                });
+                const uploadData = await uploadRes.json();
+                if (uploadData.url) {
+                    newImageUrl = uploadData.url;
+                } else {
+                    throw new Error("Error uploading image");
+                }
+                setForm(prev => ({...prev, image: newImageUrl}));
+                setImageFile(file);
+                // Si hay imagen previa, la borramos después de subir la nueva
+                if (prevImageUrl && !prevImageUrl.startsWith('blob:')) {
+                    await fetch(`/api/blob?url=${encodeURIComponent(prevImageUrl)}`, {method: 'DELETE'});
+                }
+            } catch (err) {
+                if (newImageUrl) {
+                    // Si la imagen nueva fue subida pero algo falló después, la borramos
+                    await fetch(`/api/blob?url=${encodeURIComponent(newImageUrl)}`, {method: 'DELETE'});
+                }
+                // Opcional: podrías mostrar un error al usuario
+                // setError((err as Error).message || "Error uploading image");
+            }
         }
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        let imageUrl = form.image;
-        // Si hay nueva imagen, súbela
-        if (imageFile) {
-            const ext = imageFile.name.split('.').pop();
-            const uuidName = `${crypto.randomUUID()}.${ext}`;
-            const uploadRes = await fetch(`/api/blob?filename=${uuidName}`, {
-                method: 'POST',
-                body: imageFile,
-            });
-            const uploadData = await uploadRes.json();
-            if (uploadData.url) {
-                imageUrl = uploadData.url;
+        let productData = {...form};
+        // Si es producto nuevo y hay imagen, súbela aquí
+        if ((!product || !product.id || product.id === 0) && imageFile) {
+            let newImageUrl = '';
+            try {
+                const ext = imageFile.name.split('.').pop();
+                const uuidName = `${crypto.randomUUID()}.${ext}`;
+                const uploadRes = await fetch(`/api/blob?filename=${uuidName}`, {
+                    method: 'POST',
+                    body: imageFile,
+                });
+                const uploadData = await uploadRes.json();
+                if (uploadData.url) {
+                    newImageUrl = uploadData.url;
+                } else {
+                    throw new Error('Error uploading image');
+                }
+                productData = {...productData, image: newImageUrl};
+            } catch (err) {
+                // Si la imagen nueva fue subida pero algo falló después, la borramos
+                if (newImageUrl) {
+                    await fetch(`/api/blob?url=${encodeURIComponent(newImageUrl)}`, {method: 'DELETE'});
+                }
+                // Opcional: podrías mostrar un error al usuario
+                // setError((err as Error).message || 'Error uploading image');
             }
         }
-        // Construye el objeto producto para el submit
-        const productData = {...form, image: imageUrl};
         if (onSubmit) onSubmit(productData as any); // Ajusta según tu backend
-        // Borra la imagen anterior si fue cambiada
-        if (imageFile && originalImage && !originalImage.startsWith('blob:')) {
-            await fetch(`/api/blob?url=${encodeURIComponent(originalImage)}`, {method: 'DELETE'});
-        }
         onClose();
     };
 
@@ -103,10 +145,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                 <div className="flex flex-col items-center mb-4">
                     <ImageUploadField
                         value={form.image}
-                        onChange={(url, file) => {
-                            setForm(prev => ({...prev, image: url}));
-                            setImageFile(file || null);
-                        }}
+                        onChange={handleImageChange}
                         label="Product Image"
                         width={160}
                         height={160}
