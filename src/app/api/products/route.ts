@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import {ProductDB} from "@/types";
+import {del} from "@vercel/blob";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -193,11 +194,22 @@ export async function DELETE(req: NextRequest) {
   if (!id) return NextResponse.json({ error: 'Product id required' }, { status: 400 });
   try {
     const client = await pool.connect();
+    // Obtener la URL de la imagen antes de borrar el producto
+    const imgRes = await client.query(
+      `SELECT image FROM handcrafted_haven.products WHERE id = $1`,
+      [id]
+    );
+    const imageUrl = imgRes.rows[0]?.image;
+    // Eliminar el producto
     await client.query(
       `DELETE FROM handcrafted_haven.products WHERE id = $1`,
       [id]
     );
     client.release();
+    // Si hay imagen, eliminarla del blobStorage
+    if (imageUrl) {
+        await del(imageUrl);
+    }
     return NextResponse.json({ ok: true });
   } catch (err) {
     return NextResponse.json({ error: "Error deleting product" }, { status: 500 });
