@@ -62,6 +62,7 @@ export default function SellerProfileInfo({ profile, setProfile }: SellerProfile
       setOriginalImage(imageUrl);
       setNewImageFile(null);
     } catch (err) {
+        console.error("Error updating profile:", err);
       setError('Error updating profile');
     } finally {
       setUploading(false);

@@ -33,13 +33,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
     return NextResponse.json(result.rows[0]);
   } catch (err) {
+      console.log("Error fetching seller info:", err);
     return NextResponse.json({ error: "Error fetching seller info" }, { status: 500 });
   }
 }
 
 // PUT /api/seller/[id] - Update seller info
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } = await params;
   const { fullName, shopName, description, image } = await req.json();
   try {
     const client = await pool.connect();
@@ -50,6 +51,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     client.release();
     return NextResponse.json({ ok: true });
   } catch (err) {
+    console.error("Error updating seller info:", err);
     return NextResponse.json({ error: "Error updating seller info" }, { status: 500 });
   }
 }

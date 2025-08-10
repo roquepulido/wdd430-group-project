@@ -33,7 +33,7 @@ export default function SellerDashboard() {
 
     const loadProfile = async () => {
         // get user id from session
-        // @ts-ignore
+        // @ts-expect-error session.user is not typed
         const sellerIdSession = session?.user?.sellerId;
         if (!sellerIdSession) return;
         const res = await fetch(`/api/seller/${sellerIdSession}`);

@@ -49,11 +49,12 @@ const handler = NextAuth({
     callbacks: {
         async session({session, token}) {
 
-            if (!session.user) session.user = {} as any;
+            type UserSession = typeof session.user & { id?: string | null, sellerId?: string | null };
+            if (!session.user) session.user = {} as UserSession;
 
             if (token) {
-                (session.user as any).id = token.id || null;
-                (session.user as any).sellerId = token.sellerId || null;
+                (session.user as UserSession).id = typeof token.id === 'string' ? token.id : token.id ? String(token.id) : null;
+                (session.user as UserSession).sellerId = typeof token.sellerId === 'string' ? token.sellerId : token.sellerId ? String(token.sellerId) : null;
             }
             return session;
         },

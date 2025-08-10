@@ -9,6 +9,7 @@ export async function DELETE(req: NextRequest) {
     await del(url);
     return NextResponse.json({ ok: true });
   } catch (err) {
+      console.error("Error deleting blob:", err);
     return NextResponse.json({ error: 'Error deleting blob' }, { status: 500 });
   }
 }
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
     const uploaded = await put(filename, blob, { access: 'public' });
     return NextResponse.json({ url: uploaded.url });
   } catch (err) {
+      console.error("Error uploading blob:", err);
     return NextResponse.json({ error: 'Error uploading blob' }, { status: 500 });
   }
 }
