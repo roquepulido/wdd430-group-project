@@ -13,6 +13,7 @@ export default function SellerDashboard() {
     const [showProductModal, setShowProductModal] = useState(false);
     const [editProduct, setEditProduct] = useState<ProductDetail>(blankProductDetail);
     const [profile, setProfile] = useState<Seller>(blankSeller);
+    const [products, setProducts] = useState<ProductDetail[]>([]);
 
     const handleAddProduct = () => {
         setEditProduct(blankProductDetail);
@@ -22,12 +23,44 @@ export default function SellerDashboard() {
         setEditProduct(product);
         setShowProductModal(true);
     };
+    const handleDeleteProduct = async (productId: number) => {
+        if (!confirm('Are you sure you want to delete this product?')) return;
+        const res = await fetch(`/api/products?id=${productId}`, { method: 'DELETE' });
+        // @ts-expect-error session.user is not typed
+        if (res.ok && session?.user?.sellerId) {
+        // @ts-expect-error session.user is not typed
+            loadProducts(session.user.sellerId);
+        }
+    };
     const handleCloseModal = () => {
         setShowProductModal(false);
         setEditProduct(blankProductDetail);
     };
-    const handleProductSubmit = (prod: FormData) => {
-        console.log(prod)
+    const handleProductSubmit = async (prod: any) => {
+        // @ts-expect-error session.user is not typed
+        const sellerId = session?.user?.sellerId;
+        if (!sellerId) return;
+        if (prod.id && prod.id !== 0) {
+            // edit
+            const res = await fetch(`/api/products?id=${prod.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...prod, seller_id: sellerId })
+            });
+            if (res.ok) {
+                loadProducts(sellerId);
+            }
+        } else {
+            // create
+            const res = await fetch('/api/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...prod, seller_id: sellerId })
+            });
+            if (res.ok) {
+                loadProducts(sellerId);
+            }
+        }
         handleCloseModal();
     };
 
@@ -51,44 +84,22 @@ export default function SellerDashboard() {
         }
     }
 
-    // Example products
-    const products: ProductDetail[] = [
-        {
-            id: 1,
-            name: "Wooden Bowl",
-            price: 25,
-            category: "Kitchenware",
-            image: "https://picsum.photos/100?random=1",
-            description: "Handcrafted wooden bowl.",
-            rating: 4.5,
-            stock: 10,
-            isAvailable: true,
-            reviews: [],
-            seller: blankSeller,
-            createdAt: "",
-            updatedAt: ""
-        },
-        {
-            id: 2,
-            name: "Handmade Mug",
-            price: 18,
-            category: "Ceramics",
-            image: "https://picsum.photos/100?random=2",
-            description: "Ceramic mug.",
-            rating: 2,
-            stock: 0,
-            isAvailable: false,
-            reviews: [],
-            seller: blankSeller,
-            createdAt: "",
-            updatedAt: ""
-        },
-    ];
-
+    const loadProducts = async (sellerId: string) => {
+        const res = await fetch(`/api/products?sellerId=${sellerId}`);
+        if (res.ok) {
+            const data = await res.json();
+            setProducts(data);
+        }
+    };
 
     useEffect(() => {
         loadProfile();
-    }, []);
+        // @ts-expect-error session.user is not typed
+        if (session?.user?.sellerId) {
+            // @ts-expect-error session.user is not typed
+           loadProducts(session.user.sellerId);
+        }
+    }, [session]);
 
     return (
         <div className="bg-[#F9F5F0] text-[#333333] min-h-screen">
@@ -112,7 +123,7 @@ export default function SellerDashboard() {
                         {/* Product list */}
                         <div className="flex flex-col gap-4">
                             {products.map((product) => (
-                                <SellerProductList key={product.id} product={product} onEdit={handleEditProduct}/>
+                                <SellerProductList key={product.id} product={product} onEdit={handleEditProduct} onDelete={handleDeleteProduct}/>
                             ))}
                         </div>
                     </section>

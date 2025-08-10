@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {ProductDetail} from "@/types";
 import {blankProductDetail} from "@/types/blanks";
-import Image from "next/image";
+import ImageUploadField from "@/components/ui/ImageUploadField";
 
 interface ProductModalProps {
     show: boolean;
@@ -13,12 +13,19 @@ interface ProductModalProps {
 const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmit, product}) => {
     const [form, setForm] = useState<ProductDetail>(blankProductDetail);
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [originalImage, setOriginalImage] = useState<string>("");
 
     useEffect(() => {
         if (product) setForm(product);
         else setForm(blankProductDetail);
         setImageFile(null);
     }, [product, show]);
+
+    useEffect(() => {
+        if (form.image && typeof form.image === 'string' && !form.image.startsWith('blob:')) {
+            setOriginalImage(form.image);
+        }
+    }, [form.image]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string, value: unknown } }
@@ -58,17 +65,29 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
         }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("name", form.name);
-        formData.append("description", form.description);
-        formData.append("price", String(form.price));
-        formData.append("category", form.category);
+        let imageUrl = form.image;
+        // Si hay nueva imagen, súbela
         if (imageFile) {
-            formData.append("image", imageFile);
+            const ext = imageFile.name.split('.').pop();
+            const uuidName = `${crypto.randomUUID()}.${ext}`;
+            const uploadRes = await fetch(`/api/blob?filename=${uuidName}`, {
+                method: 'POST',
+                body: imageFile,
+            });
+            const uploadData = await uploadRes.json();
+            if (uploadData.url) {
+                imageUrl = uploadData.url;
+            }
         }
-        if (onSubmit) onSubmit(formData as FormData); // Ajusta según tu backend
+        // Construye el objeto producto para el submit
+        const productData = { ...form, image: imageUrl };
+        if (onSubmit) onSubmit(productData as any); // Ajusta según tu backend
+        // Borra la imagen anterior si fue cambiada
+        if (imageFile && originalImage && !originalImage.startsWith('blob:')) {
+            await fetch(`/api/blob?url=${encodeURIComponent(originalImage)}`, { method: 'DELETE' });
+        }
         onClose();
     };
 
@@ -83,28 +102,18 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
              onClick={handleBackdropClick}>
             <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
                 <button onClick={onClose} className="absolute top-2 right-2 text-[#6B4F3B] text-2xl">&times;</button>
-                <h2 className="text-2xl font-bold mb-4 text-[#6B4F3B]">{product ? 'Edit Product' : 'Add Product'}</h2>
+                <h2 className="text-2xl font-bold mb-4 text-[#6B4F3B]">{product?.id != 0 ? 'Edit Product' : 'Add Product'}</h2>
                 <div className="flex flex-col items-center mb-4">
-                    {form.image ? (
-                        <Image src={typeof form.image === 'string' ? form.image : URL.createObjectURL(form.image)}
-                             alt="Product" width={40} height={40} className="w-40 h-40 object-cover rounded mb-2 border"/>
-                    ) : (
-                        <div
-                            className="w-40 h-40 bg-[#E8C07D] rounded flex flex-col items-center justify-center text-[#6B4F3B] mb-2 relative">
-                            <span className="mb-2">No Image</span>
-                            <label
-                                className="absolute bottom-2 right-2 cursor-pointer bg-white rounded-full p-1 shadow hover:bg-[#E8C07D] transition"
-                                title="Upload image">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     strokeWidth={1.5} stroke="#6B4F3B" className="w-6 h-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 16v-8m0 0l-3 3m3-3l3 3"/>
-                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <input type="file" className="hidden" accept="image/*" onChange={handleImageChange}/>
-                            </label>
-                        </div>
-                    )}
+                    <ImageUploadField
+                        value={form.image}
+                        onChange={(url, file) => {
+                            setForm(prev => ({ ...prev, image: url }));
+                            setImageFile(file || null);
+                        }}
+                        label="Product Image"
+                        width={160}
+                        height={160}
+                    />
                 </div>
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <input type="text" name="name" placeholder="Product Name" className="border rounded px-3 py-2"
@@ -157,7 +166,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                                })}/>
                     </div>
                     <button type="submit"
-                            className="bg-[#E8C07D] text-[#333333] px-4 py-2 rounded hover:bg-[#cfa44e] font-bold">{product ? 'Update' : 'Add'} Product
+                            className="bg-[#E8C07D] text-[#333333] px-4 py-2 rounded hover:bg-[#cfa44e] font-bold">{product?.id != 0 ? 'Update' : 'Add'} Product
                     </button>
                 </form>
             </div>

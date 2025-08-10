@@ -1,6 +1,8 @@
 import {Seller, ProductDetail, Review} from "./index";
 
 export const blankSeller: Seller = {
+    id: 0,
+    userId: 0,
     fullName: "",
     email: "",
     shopName: "",

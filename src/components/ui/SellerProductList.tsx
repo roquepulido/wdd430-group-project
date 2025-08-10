@@ -6,9 +6,10 @@ import Image from "next/image";
 interface SellerProductListProps {
   product: ProductDetail;
   onEdit: (product: ProductDetail) => void;
+  onDelete: (productId: number) => void;
 }
 
-export default function SellerProductList({ product, onEdit }: SellerProductListProps) {
+export default function SellerProductList({ product, onEdit, onDelete }: SellerProductListProps) {
   return (
         <div className="border rounded-lg p-4 flex items-center gap-4">
           {product.image ? (
@@ -25,7 +26,8 @@ export default function SellerProductList({ product, onEdit }: SellerProductList
           </div>
           <button onClick={() => onEdit(product)}
                   className="bg-[#E8C07D] text-[#333333] px-3 py-1 rounded shadow hover:bg-[#cfa44e] font-bold">Edit</button>
+          <button onClick={() => onDelete(product.id)}
+                  className="bg-red-400 text-white px-3 py-1 rounded shadow hover:bg-red-600 font-bold ml-2">Delete</button>
         </div>
   );
 }
-

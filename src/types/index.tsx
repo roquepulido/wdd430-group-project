@@ -1,5 +1,5 @@
 export interface Seller {
-    id: number,
+    id: number | null,
     userId: number,
     fullName:string,
     email:string,
