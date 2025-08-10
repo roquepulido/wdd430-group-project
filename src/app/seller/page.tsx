@@ -1,19 +1,31 @@
 'use client';
 import Link from "next/link";
 import {useEffect, useState} from "react";
-import ProductModal from "@/components/ui/ProductModal";
-import {Product, Seller} from "@/types";
-import Image from "next/image";
+import ProductModalSeller from "@/components/ui/ProductModalSeller";
+import {ProductDetail, Seller} from "@/types";
+import SellerProductList from "@/components/ui/SellerProductList";
+import SellerProfileInfo from "@/components/ui/SellerProfileInfo";
 
 export default function SellerDashboard() {
-    const [showProductModal, setShowProductModal] = useState(false);
-    const [editProduct, setEditProduct] = useState<Product>({
+    const blankProduct: ProductDetail = {
+        id: 0,
         name: "",
         description: "",
         price: 0,
         category: "",
-        image: ""
-    });
+        image: "",
+        rating: 0,
+        isAvailable: false,
+        reviews: [],
+        seller: {
+            fullName: "", email: "", shopName: "", description: "", image: ""
+        },
+        createdAt: "",
+        updatedAt: "",
+        stock: 0
+    }
+    const [showProductModal, setShowProductModal] = useState(false);
+    const [editProduct, setEditProduct] = useState<ProductDetail>(blankProduct);
     const [profile, setProfile] = useState<Seller>({
         fullName: "",
         email: "",
@@ -23,16 +35,16 @@ export default function SellerDashboard() {
     });
 
     const handleAddProduct = () => {
-        setEditProduct({} as Product);
+        setEditProduct(blankProduct);
         setShowProductModal(true);
     };
-    const handleEditProduct = (product: Product) => {
+    const handleEditProduct = (product: ProductDetail) => {
         setEditProduct(product);
         setShowProductModal(true);
     };
     const handleCloseModal = () => {
         setShowProductModal(false);
-        setEditProduct({} as Product);
+        setEditProduct(blankProduct);
     };
     const handleProductSubmit = (prod: FormData) => {
         console.log(prod)
@@ -43,28 +55,6 @@ export default function SellerDashboard() {
         // TODO change this to fetch from an API
         setProfile(profileSeller);
     }
-
-
-    // Example products
-    const products = [
-        {
-            id: 1,
-            name: "Wooden Bowl",
-            price: 25,
-            category: "Kitchenware",
-            image: "https://picsum.photos/100?random=1",
-            description: "Handcrafted wooden bowl."
-        },
-        {
-            id: 2,
-            name: "Handmade Mug",
-            price: 18,
-            category: "Ceramics",
-            image: "https://picsum.photos/100?random=2",
-            description: "Ceramic mug."
-        },
-    ];
-
     const profileSeller: Seller = {
         fullName: "Jane Doe",
         email: "email@test.com",
@@ -72,6 +62,41 @@ export default function SellerDashboard() {
         description: "Woodworking artisan passionate about sustainable decor.",
         image: "https://picsum.photos/100?random=3"
     }
+
+    // Example products
+    const products: ProductDetail[] = [
+        {
+            id: 1,
+            name: "Wooden Bowl",
+            price: 25,
+            category: "Kitchenware",
+            image: "https://picsum.photos/100?random=1",
+            description: "Handcrafted wooden bowl.",
+            rating: 4.5,
+            stock: 10,
+            isAvailable: true,
+            reviews: [],
+            seller: profileSeller,
+            createdAt: "",
+            updatedAt: ""
+        },
+        {
+            id: 2,
+            name: "Handmade Mug",
+            price: 18,
+            category: "Ceramics",
+            image: "https://picsum.photos/100?random=2",
+            description: "Ceramic mug.",
+            rating: 2,
+            stock: 0,
+            isAvailable: false,
+            reviews: [],
+            seller: profileSeller,
+            createdAt: "",
+            updatedAt: ""
+        },
+    ];
+
 
     useEffect(() => {
         loadProfile();
@@ -86,60 +111,7 @@ export default function SellerDashboard() {
                 </header>
                 <div className="grid md:grid-cols-2 gap-8">
                     {/* Profile Section */}
-                    <section className="bg-white p-8 rounded-lg shadow-md">
-                        <h2 className="text-2xl font-bold mb-4 text-[#6B4F3B]">Profile Information</h2>
-                        <form className="flex flex-col gap-4 mb-4">
-                            <div className="flex flex-col items-center relative mb-2">
-                                {profile.image ? (
-                                    <Image src={profile.image} alt="Shop Logo"
-                                            width={96} height={96}
-                                         className="w-24 h-24 object-cover rounded-full border mx-auto"/>
-                                ) : (
-                                    <div
-                                        className="w-24 h-24 bg-[#E8C07D] rounded-full flex items-center justify-center text-[#6B4F3B] mx-auto">No
-                                        Logo</div>
-                                )}
-                                <label
-                                    className="absolute top-2 right-2 cursor-pointer bg-white rounded-full p-1 shadow hover:bg-[#E8C07D] transition"
-                                    title="Change logo">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                         strokeWidth={1.5} stroke="#6B4F3B" className="w-6 h-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round"
-                                              d="M16.862 4.487a2.25 2.25 0 1 1 3.182 3.182l-9.193 9.193a4.5 4.5 0 0 1-1.897 1.13l-3.06.918.918-3.06a4.5 4.5 0 0 1 1.13-1.897l9.193-9.193z"/>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 6.75l-1.5-1.5"/>
-                                    </svg>
-                                    <input type="file" accept="image/*" className="hidden" onChange={e => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            const reader = new FileReader();
-                                            reader.onload = (ev) => {
-                                                setProfile(prev => ({...prev, image: ev.target?.result as string}));
-                                            };
-                                            reader.readAsDataURL(file);
-                                        }
-                                    }}/>
-                                </label>
-                            </div>
-                            <input type="text" placeholder="Full Name" className="border rounded px-3 py-2"
-                                   value={profile.fullName}
-                                   onChange={e => setProfile(prev => ({...prev, fullName: e.target.value}))}/>
-                            <input type="email" placeholder="Email" className="border rounded px-3 py-2"
-                                   value={profile.email}
-                                   onChange={e => setProfile(prev => ({...prev, email: e.target.value}))}/>
-                            <input type="text" placeholder="Shop Name" className="border rounded px-3 py-2"
-                                   value={profile.shopName}
-                                   onChange={e => setProfile(prev => ({...prev, shopName: e.target.value}))}/>
-                            <textarea placeholder="Short Bio / Description" className="border rounded px-3 py-2"
-                                      rows={3} value={profile.description}
-                                      onChange={e => setProfile(prev => ({...prev, description: e.target.value}))}/>
-                            <button type="button"
-                                    className="bg-[#6B4F3B] text-white px-4 py-2 rounded hover:bg-[#543c2a]"
-                                    onClick={() => {/* TODO Aquí podrías guardar la info en backend */
-                                    }}>Update
-                                Profile
-                            </button>
-                        </form>
-                    </section>
+                    <SellerProfileInfo profile={profile} setProfile={setProfile}/>
                     {/* Products Section */}
                     <section className="bg-white p-8 rounded-lg shadow-md flex flex-col">
                         <div className="flex items-center justify-between mb-4">
@@ -152,32 +124,13 @@ export default function SellerDashboard() {
                         {/* Product list */}
                         <div className="flex flex-col gap-4">
                             {products.map((product) => (
-                                <div key={product.id} className="border rounded-lg p-4 flex items-center gap-4">
-                                    {product.image ? (
-                                        <Image
-                                            src={product.image}
-                                            alt={product.name}
-                                            className="w-16 h-16 object-cover rounded"
-                                            width={64}
-                                            height={64}
-                                        />
-                                    ) : (
-                                        <div className="w-16 h-16 bg-[#E8C07D] rounded"></div>
-                                    )}
-                                    <div className="flex-1">
-                                        <h3 className="font-bold text-lg">{product.name}</h3>
-                                        <p className="text-sm text-[#6B4F3B]">${product.price}.00</p>
-                                    </div>
-                                    <button className="text-[#6B4F3B] underline"
-                                            onClick={() => handleEditProduct(product)}>Edit
-                                    </button>
-                                </div>
+                                <SellerProductList key={product.id} product={product} onEdit={handleEditProduct}/>
                             ))}
                         </div>
                     </section>
                 </div>
                 {/* Product Modal */}
-                <ProductModal
+                <ProductModalSeller
                     show={showProductModal}
                     onClose={handleCloseModal}
                     onSubmit={handleProductSubmit}

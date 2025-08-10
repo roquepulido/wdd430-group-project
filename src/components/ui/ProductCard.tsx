@@ -1,0 +1,30 @@
+import React from "react";
+import {ProductDetail} from "@/types";
+import ProductRating from "@/components/ui/ProductRating";
+
+export default function ProductCard({product, onClick}: { product: ProductDetail; onClick: () => void }) {
+    return (
+        <div
+            className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition flex flex-col"
+            onClick={onClick}
+        >
+            <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-48 object-cover"
+            />
+            <div className="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                    <h2 className="text-xl font-bold text-[#6B4F3B] mb-2">{product.name}</h2>
+                    <p className="text-[#6B4F3B] mb-2">${product.price}</p>
+                    {product.seller.shopName && (
+                        <p className="text-sm text-[#6B4F3B] italic mb-1">{product.seller.shopName}</p>
+                    )}
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                    <ProductRating rating={product.rating} reviewsCount={product.reviews.length}/>
+                </div>
+            </div>
+        </div>
+    );
+}

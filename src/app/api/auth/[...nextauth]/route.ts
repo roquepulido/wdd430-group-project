@@ -10,7 +10,7 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-          //TODO Cambiar a base de datos
+          // TODO Cambiar a base de datos
         if (
           credentials?.email === "email@test.com" &&
           credentials?.password === "password"
