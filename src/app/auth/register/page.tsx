@@ -51,6 +51,7 @@ export default function SellerRegister() {
                 setError(data.error || "Registration failed");
             }
         } catch (err) {
+            console.error("Registration error:", err);
             setError("Registration failed");
         }
     };

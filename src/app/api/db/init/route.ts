@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Client } from "pg";
 
-export async function POST(Req: Request) {
+export async function POST() {
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
   });
