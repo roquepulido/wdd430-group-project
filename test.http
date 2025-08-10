@@ -1,0 +1,5 @@
+### Initialize the database
+POST http://localhost:3000/api/db/init
+
+### Seed Admin user
+POST http://localhost:3000/api/db/seed

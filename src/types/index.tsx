@@ -34,3 +34,12 @@ export interface Review {
     rating: number;
     comment: string;
 }
+
+export interface UserDB {
+    id: number;
+    email: string;
+    password_hash: string;
+    role: 'user' | 'admin' | 'seller';
+    created_at: string;
+    updated_at: string;
+}
