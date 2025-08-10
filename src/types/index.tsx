@@ -10,6 +10,7 @@ export interface Seller {
 
 export interface ProductDetail{
     id: number;
+    sellerId: number;
     name: string;
     price: number;
     image: string ;
@@ -17,7 +18,6 @@ export interface ProductDetail{
     category: string;
     rating: number;
     reviews: Review[];
-    seller: Seller;
     createdAt: string;
     updatedAt: string;
     stock: number;
@@ -44,4 +44,25 @@ export interface UserDB {
     role: 'user' | 'admin' | 'seller';
     created_at: string;
     updated_at: string;
+}
+export interface ProductDB {
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    description: string;
+    category: string;
+    rating: number;
+    stock: number;
+    is_available: boolean;
+    seller_id: number;
+    created_at: string;
+    updated_at: string;
+    dimensions?: {
+        width: number;
+        height: number;
+        depth: number;
+    };
+    tags?: string[];
+    materials?: string[];
 }

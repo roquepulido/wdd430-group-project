@@ -2,7 +2,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import ProductModalSeller from "@/components/ui/ProductModalSeller";
-import {ProductDetail, Seller} from "@/types";
+import {ProductDB, ProductDetail, Seller} from "@/types";
 import SellerProductList from "@/components/ui/SellerProductList";
 import SellerProfileInfo from "@/components/ui/SellerProfileInfo";
 import {blankProductDetail, blankSeller} from "@/types/blanks";
@@ -36,26 +36,34 @@ export default function SellerDashboard() {
         setShowProductModal(false);
         setEditProduct(blankProductDetail);
     };
-    const handleProductSubmit = async (prod: any) => {
+    const handleProductSubmit = async (prod: FormData) => {
         // @ts-expect-error session.user is not typed
         const sellerId = session?.user?.sellerId;
         if (!sellerId) return;
+        // @ts-expect-error session.user is not typed
+        prod.seller_id = sellerId;
+        // @ts-expect-error session.user is not typed
+        prod.is_available = prod.isAvailable ?? false;
+        // @ts-expect-error session.user is not typed
         if (prod.id && prod.id !== 0) {
+            console.log("Product to create:", prod);
             // edit
+            // @ts-expect-error session.user is not typed
             const res = await fetch(`/api/products?id=${prod.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...prod, seller_id: sellerId })
+                body: JSON.stringify(prod)
             });
             if (res.ok) {
                 loadProducts(sellerId);
             }
         } else {
             // create
+            console.log("Product to create:", prod);
             const res = await fetch('/api/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...prod, seller_id: sellerId })
+                body: JSON.stringify(prod)
             });
             if (res.ok) {
                 loadProducts(sellerId);
@@ -88,7 +96,26 @@ export default function SellerDashboard() {
         const res = await fetch(`/api/products?sellerId=${sellerId}`);
         if (res.ok) {
             const data = await res.json();
-            setProducts(data);
+            setProducts(data.map((d:ProductDB)=> {
+                return {
+                    id: d.id,
+                    sellerId: d.seller_id,
+                    name: d.name,
+                    price: d.price,
+                    image: d.image,
+                    description: d.description,
+                    category: d.category,
+                    rating: d.rating || 0,
+                    reviews: [],
+                    createdAt: d.created_at,
+                    updatedAt: d.updated_at,
+                    stock: d.stock || 0,
+                    isAvailable: d.is_available || false,
+                    tags: d.tags,
+                    dimensions: d.dimensions,
+                    materials: d.materials
+                }
+            }));
         }
     };
 

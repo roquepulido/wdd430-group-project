@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import {ProductDetail} from "@/types";
 import {blankProductDetail} from "@/types/blanks";
 import ImageUploadField from "@/components/ui/ImageUploadField";
+import PillsInput from "@/components/ui/PillsInput";
 
 interface ProductModalProps {
     show: boolean;
@@ -16,8 +17,10 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
     const [originalImage, setOriginalImage] = useState<string>("");
 
     useEffect(() => {
-        if (product) setForm(product);
-        else setForm(blankProductDetail);
+        if (product) {
+            console.log("ProductModalSeller useEffect", product);
+            setForm(product);
+        } else setForm(blankProductDetail);
         setImageFile(null);
     }, [product, show]);
 
@@ -30,11 +33,11 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string, value: unknown } }
     ) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         // Boolean for checkbox
         if (name === "isAvailable") {
-            setForm(prev => ({ ...prev, isAvailable: Boolean(value) }));
-        // Arrays for tags/materials
+            setForm(prev => ({...prev, isAvailable: Boolean(value)}));
+            // Arrays for tags/materials
         } else if (name === "tags" || name === "materials") {
             setForm(prev => ({
                 ...prev,
@@ -42,7 +45,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                     ? (value as string[])
                     : String(value).split(',').map((t) => t.trim()),
             }));
-        // Object for dimensions
+            // Object for dimensions
         } else if (name === "dimensions") {
             // Ensure all dimension fields are numbers and not undefined
             const dims = value as { width?: number; height?: number; depth?: number };
@@ -55,7 +58,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                 }
             }));
         } else {
-            setForm(prev => ({ ...prev, [name]: name === "price" ? parseFloat(String(value)) : value }));
+            setForm(prev => ({...prev, [name]: name === "price" ? parseFloat(String(value)) : value}));
         }
     };
 
@@ -82,24 +85,18 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
             }
         }
         // Construye el objeto producto para el submit
-        const productData = { ...form, image: imageUrl };
+        const productData = {...form, image: imageUrl};
         if (onSubmit) onSubmit(productData as any); // Ajusta según tu backend
         // Borra la imagen anterior si fue cambiada
         if (imageFile && originalImage && !originalImage.startsWith('blob:')) {
-            await fetch(`/api/blob?url=${encodeURIComponent(originalImage)}`, { method: 'DELETE' });
+            await fetch(`/api/blob?url=${encodeURIComponent(originalImage)}`, {method: 'DELETE'});
         }
         onClose();
     };
 
-    const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) {
-            onClose();
-        }
-    };
     if (!show) return null;
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-             onClick={handleBackdropClick}>
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
                 <button onClick={onClose} className="absolute top-2 right-2 text-[#6B4F3B] text-2xl">&times;</button>
                 <h2 className="text-2xl font-bold mb-4 text-[#6B4F3B]">{product?.id != 0 ? 'Edit Product' : 'Add Product'}</h2>
@@ -107,7 +104,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                     <ImageUploadField
                         value={form.image}
                         onChange={(url, file) => {
-                            setForm(prev => ({ ...prev, image: url }));
+                            setForm(prev => ({...prev, image: url}));
                             setImageFile(file || null);
                         }}
                         label="Product Image"
@@ -131,14 +128,32 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                         <input type="checkbox" name="isAvailable" checked={form.isAvailable || false}
                                onChange={e => handleChange({target: {name: 'isAvailable', value: e.target.checked}})}/>
                     </div>
-                    <input type="number" name="rating" placeholder="Rating" className="border rounded px-3 py-2"
-                           value={form.rating || ''} onChange={handleChange} min="0" max="5" step="0.1"/>
-                    <input type="text" name="tags" placeholder="Tags (comma separated)"
-                           className="border rounded px-3 py-2" value={form.tags ? form.tags.join(',') : ''}
-                           onChange={e => handleChange({target: {name: 'tags', value: e.target.value}})}/>
-                    <input type="text" name="materials" placeholder="Materials (comma separated)"
-                           className="border rounded px-3 py-2" value={form.materials ? form.materials.join(',') : ''}
-                           onChange={e => handleChange({target: {name: 'materials', value: e.target.value}})}/>
+                    <PillsInput
+                        value={form.tags || []}
+                        onChange={tags => setForm(prev => ({...prev, tags}))}
+                        placeholder="Add tag and press Enter or comma"
+                        label="Tags"
+                    />
+                    <PillsInput
+                        value={form.materials || []}
+                        onChange={materials => setForm(prev => ({...prev, materials}))}
+                        placeholder="Add material and press Enter or comma"
+                        label="Materials"
+                    />
+                    <div className="flex flex-wrap gap-2 mb-2">
+                        {form.tags && form.tags.map((tag, idx) => (
+                            <span key={tag + idx}
+                                  className="bg-[#E8C07D] text-[#6B4F3B] px-3 py-1 rounded-full flex items-center">
+                                {tag}
+                            </span>
+                        ))}
+                        {form.materials && form.materials.map((mat, idx) => (
+                            <span key={mat + idx}
+                                  className="bg-[#6B4F3B] text-white px-3 py-1 rounded-full flex items-center">
+                                {mat}
+                            </span>
+                        ))}
+                    </div>
                     <div className="flex gap-2">
                         <input type="number" name="width" placeholder="Width (cm)"
                                className="border rounded px-3 py-2 w-1/3" value={form.dimensions?.width || ''}

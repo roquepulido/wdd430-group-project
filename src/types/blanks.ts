@@ -17,6 +17,7 @@ export const blankReview: Review = {
 
 export const blankProductDetail: ProductDetail = {
     id: 0,
+    sellerId:0,
     name: "",
     price: 0,
     image: "",
@@ -24,7 +25,6 @@ export const blankProductDetail: ProductDetail = {
     category: "",
     rating: 0,
     reviews: [],
-    seller: blankSeller,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     stock: 0,
