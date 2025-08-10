@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import LinkButton from "@/components/ui/LinkButton";
 
 export default function SellerRegister() {
-    const { data: session, status } = useSession();
+    const {status } = useSession();
     const router = useRouter();
     useEffect(() => {
         if (status === "authenticated") {

@@ -1,6 +1,7 @@
 import React from "react";
 import ProductRating from "@/components/ui/ProductRating";
 import {ProductDetail} from "@/types";
+import Image from "next/image";
 
 interface SellerProductListProps {
   product: ProductDetail;
@@ -11,7 +12,7 @@ export default function SellerProductList({ product, onEdit }: SellerProductList
   return (
         <div className="border rounded-lg p-4 flex items-center gap-4">
           {product.image ? (
-            <img src={product.image} alt={product.name} className="w-20 h-20 object-cover rounded" />
+            <Image src={product.image} alt={product.name}  width={50} height={50} className="w-20 h-20 object-cover rounded" />
           ) : (
             <div className="w-20 h-20 bg-gray-200 rounded" />
           )}

@@ -3,6 +3,7 @@ import {useSession} from "next-auth/react";
 import {ProductDetail} from "@/types";
 import ProductReviews from "@/components/ui/ProductReviews";
 import ProductReviewForm from "@/components/ui/ProductReviewForm";
+import Image from "next/image";
 
 export default function ProductDetailModal({product, onClose}: { product: ProductDetail; onClose: () => void }) {
     const {data: session} = useSession();
@@ -23,7 +24,7 @@ export default function ProductDetailModal({product, onClose}: { product: Produc
                 >
                     ×
                 </button>
-                <img src={product.image} alt={product.name} className="w-full h-56 object-cover rounded mb-4"/>
+                <Image src={product.image}  width={500} height={300} alt={product.name} className="w-full h-56 object-cover rounded mb-4"/>
                 <h2 className="text-2xl font-bold text-[#6B4F3B] mb-2">{product.name}</h2>
                 <p className="text-[#6B4F3B] mb-2">${product.price}</p>
                 <p className="mb-4">{product.description}</p>

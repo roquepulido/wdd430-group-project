@@ -1,6 +1,7 @@
 import React from "react";
 import {ProductDetail} from "@/types";
 import ProductRating from "@/components/ui/ProductRating";
+import Image from "next/image";
 
 export default function ProductCard({product, onClick}: { product: ProductDetail; onClick: () => void }) {
     return (
@@ -8,9 +9,11 @@ export default function ProductCard({product, onClick}: { product: ProductDetail
             className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition flex flex-col"
             onClick={onClick}
         >
-            <img
+            <Image
                 src={product.image}
                 alt={product.name}
+                width={400}
+                height={200}
                 className="w-full h-48 object-cover"
             />
             <div className="p-4 flex-1 flex flex-col justify-between">
