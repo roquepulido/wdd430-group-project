@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {Pool} from 'pg';
 import bcrypt from 'bcryptjs';
-import {UserDB} from "@/types";
 
 const handler = NextAuth({
     providers: [
@@ -21,14 +20,20 @@ const handler = NextAuth({
                 const client = await pool.connect();
                 try {
                     const result = await client.query(
-                        'SELECT * FROM handcrafted_haven.users WHERE email = $1',
+                        'SELECT u.*, s.id as seller_id FROM handcrafted_haven.users u LEFT JOIN handcrafted_haven.sellers s ON u.id = s.user_id WHERE u.email = $1',
                         [credentials.email]
                     );
                     if (result.rows.length === 0) return null;
-                    const user: UserDB = result.rows[0];
+                    const user = result.rows[0];
                     const valid = await bcrypt.compare(credentials.password, user.password_hash);
                     if (!valid) return null;
-                    return {id: String(user.id), name: user.email, email: user.email};
+
+                    return {
+                        id: String(user.id),
+                        name: user.email,
+                        email: user.email,
+                        sellerId: user.seller_id ? String(user.seller_id) : null
+                    };
                 } finally {
                     client.release();
                 }
@@ -40,6 +45,28 @@ const handler = NextAuth({
     },
     pages: {
         signIn: "/auth/login"
+    },
+    callbacks: {
+        async session({session, token}) {
+
+            if (!session.user) session.user = {} as any;
+
+            if (token) {
+                (session.user as any).id = token.id || null;
+                (session.user as any).sellerId = token.sellerId || null;
+            }
+            return session;
+        },
+        async jwt({token, user}) {
+
+            if (user && 'id' in user) {
+                token.id = user.id;
+            }
+            if (user && 'sellerId' in user) {
+                token.sellerId = user.sellerId;
+            }
+            return token;
+        }
     }
 });
 

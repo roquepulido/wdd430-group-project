@@ -5,37 +5,17 @@ import ProductModalSeller from "@/components/ui/ProductModalSeller";
 import {ProductDetail, Seller} from "@/types";
 import SellerProductList from "@/components/ui/SellerProductList";
 import SellerProfileInfo from "@/components/ui/SellerProfileInfo";
+import {blankProductDetail, blankSeller} from "@/types/blanks";
+import { useSession } from "next-auth/react";
 
 export default function SellerDashboard() {
-    const blankProduct: ProductDetail = {
-        id: 0,
-        name: "",
-        description: "",
-        price: 0,
-        category: "",
-        image: "",
-        rating: 0,
-        isAvailable: false,
-        reviews: [],
-        seller: {
-            fullName: "", email: "", shopName: "", description: "", image: ""
-        },
-        createdAt: "",
-        updatedAt: "",
-        stock: 0
-    }
+    const { data: session } = useSession();
     const [showProductModal, setShowProductModal] = useState(false);
-    const [editProduct, setEditProduct] = useState<ProductDetail>(blankProduct);
-    const [profile, setProfile] = useState<Seller>({
-        fullName: "",
-        email: "",
-        shopName: "",
-        description: "",
-        image: ""
-    });
+    const [editProduct, setEditProduct] = useState<ProductDetail>(blankProductDetail);
+    const [profile, setProfile] = useState<Seller>(blankSeller);
 
     const handleAddProduct = () => {
-        setEditProduct(blankProduct);
+        setEditProduct(blankProductDetail);
         setShowProductModal(true);
     };
     const handleEditProduct = (product: ProductDetail) => {
@@ -44,23 +24,31 @@ export default function SellerDashboard() {
     };
     const handleCloseModal = () => {
         setShowProductModal(false);
-        setEditProduct(blankProduct);
+        setEditProduct(blankProductDetail);
     };
     const handleProductSubmit = (prod: FormData) => {
         console.log(prod)
         handleCloseModal();
     };
 
-    const loadProfile = () => {
-        // TODO change this to fetch from an API
-        setProfile(profileSeller);
-    }
-    const profileSeller: Seller = {
-        fullName: "Jane Doe",
-        email: "email@test.com",
-        shopName: "Jane's Woodworks",
-        description: "Woodworking artisan passionate about sustainable decor.",
-        image: "https://picsum.photos/100?random=3"
+    const loadProfile = async () => {
+        // get user id from session
+        // @ts-ignore
+        const sellerIdSession = session?.user?.sellerId;
+        if (!sellerIdSession) return;
+        const res = await fetch(`/api/seller/${sellerIdSession}`);
+        if (res.ok) {
+            const data = await res.json();
+            setProfile({
+                id: data.id,
+                userId: data.user_id,
+                fullName: data.full_name,
+                email: data.email,
+                shopName: data.shop_name,
+                description: data.description,
+                image: data.image || ""
+            });
+        }
     }
 
     // Example products
@@ -76,7 +64,7 @@ export default function SellerDashboard() {
             stock: 10,
             isAvailable: true,
             reviews: [],
-            seller: profileSeller,
+            seller: blankSeller,
             createdAt: "",
             updatedAt: ""
         },
@@ -91,7 +79,7 @@ export default function SellerDashboard() {
             stock: 0,
             isAvailable: false,
             reviews: [],
-            seller: profileSeller,
+            seller: blankSeller,
             createdAt: "",
             updatedAt: ""
         },
