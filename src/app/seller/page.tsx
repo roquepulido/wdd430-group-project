@@ -36,7 +36,7 @@ export default function SellerDashboard() {
         setShowProductModal(false);
         setEditProduct(blankProductDetail);
     };
-    const handleProductSubmit = async (prod: FormData) => {
+    const handleProductSubmit = async (prod: ProductDetail) => {
         // @ts-expect-error session.user is not typed
         const sellerId = session?.user?.sellerId;
         if (!sellerId) return;
@@ -44,11 +44,9 @@ export default function SellerDashboard() {
         prod.seller_id = sellerId;
         // @ts-expect-error session.user is not typed
         prod.is_available = prod.isAvailable ?? false;
-        // @ts-expect-error session.user is not typed
         if (prod.id && prod.id !== 0) {
             console.log("Product to create:", prod);
             // edit
-            // @ts-expect-error session.user is not typed
             const res = await fetch(`/api/products?id=${prod.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
