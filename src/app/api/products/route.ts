@@ -1,3 +1,56 @@
+// GET /api/products/categories - Obtener todas las categorías únicas de productos
+export async function GET_CATEGORIES() {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(
+      `SELECT DISTINCT category FROM handcrafted_haven.products WHERE is_available = true`
+    );
+    const categories = result.rows.map(r => r.category).filter(Boolean);
+    client.release();
+    return NextResponse.json(categories);
+  } catch (err) {
+    console.error("Error fetching categories:", err);
+    return NextResponse.json({ error: "Error fetching categories" }, { status: 500 });
+  }
+}
+
+// GET /api/products/materials - Obtener todos los materiales únicos
+export async function GET_MATERIALS() {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(
+      `SELECT DISTINCT m.name FROM handcrafted_haven.materials m
+        JOIN handcrafted_haven.product_materials pm ON pm.material_id = m.id
+        JOIN handcrafted_haven.products p ON p.id = pm.product_id
+        WHERE p.is_available = true`
+    );
+    const materials = result.rows.map(r => r.name).filter(Boolean);
+    client.release();
+    return NextResponse.json(materials);
+  } catch (err) {
+    console.error("Error fetching materials:", err);
+    return NextResponse.json({ error: "Error fetching materials" }, { status: 500 });
+  }
+}
+
+// GET /api/products/tags - Obtener todos los tags únicos
+export async function GET_TAGS() {
+  try {
+    const client = await pool.connect();
+    const result = await client.query(
+      `SELECT DISTINCT t.name FROM handcrafted_haven.tags t
+        JOIN handcrafted_haven.product_tags pt ON pt.tag_id = t.id
+        JOIN handcrafted_haven.products p ON p.id = pt.product_id
+        WHERE p.is_available = true`
+    );
+    const tags = result.rows.map(r => r.name).filter(Boolean);
+    client.release();
+    return NextResponse.json(tags);
+  } catch (err) {
+    console.error("Error fetching tags:", err);
+    return NextResponse.json({ error: "Error fetching tags" }, { status: 500 });
+  }
+}
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import {ProductDB} from "@/types";
@@ -16,15 +69,19 @@ export async function GET(req: NextRequest) {
     const client = await pool.connect();
     let result;
     if (sellerId) {
-      // Obtener productos de un seller específico
+      // Obtener productos de un seller específico, incluyendo shopName
       result = await client.query(
-        `SELECT * FROM handcrafted_haven.products WHERE seller_id = $1`,
+        `SELECT p.*, s.shop_name as "shopName" FROM handcrafted_haven.products p
+         JOIN handcrafted_haven.sellers s ON s.id = p.seller_id
+         WHERE p.seller_id = $1`,
         [sellerId]
       );
     } else {
-      // Obtener todos los productos disponibles
+      // Obtener todos los productos disponibles, incluyendo shopName
       result = await client.query(
-        `SELECT * FROM handcrafted_haven.products WHERE is_available = true`
+        `SELECT p.*, s.shop_name as "shopName" FROM handcrafted_haven.products p
+         JOIN handcrafted_haven.sellers s ON s.id = p.seller_id
+         WHERE p.is_available = true`
       );
     }
     const products = result.rows;

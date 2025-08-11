@@ -3,3 +3,15 @@ POST http://localhost:3000/api/db/init
 
 ### Seed Admin user
 POST http://localhost:3000/api/db/seed
+
+### Get Categories
+GET http://localhost:3000/api/products/categories
+
+### Get Materials
+GET http://localhost:3000/api/products/materials
+
+### Get Tags
+GET http://localhost:3000/api/products/tags
+
+### Get Products
+GET http://localhost:3000/api/products

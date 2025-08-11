@@ -12,7 +12,6 @@ export default function SellerProfileInfo({profile, setProfile}: SellerProfileIn
     const [error, setError] = useState("");
 
   const handleImageChange = async (file: File) => {
-    debugger
     if (!file) return;
     const imageStorageURL = profile.image;
     let newUrlStorageURL = "";
@@ -56,7 +55,6 @@ export default function SellerProfileInfo({profile, setProfile}: SellerProfileIn
 
     const updateProfile = async(urlNew?: string) => {
         try {
-            debugger
             const res = await fetch(`/api/seller/${profile.id}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
@@ -71,7 +69,6 @@ export default function SellerProfileInfo({profile, setProfile}: SellerProfileIn
     };
 
     const handleUpdate = async () => {
-        debugger
         setError("");
         setUploading(true);
         await updateProfile();

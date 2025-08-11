@@ -29,6 +29,7 @@ export interface ProductDetail{
         depth: number;
     };
     materials?: string[];
+    shopName?: string;
 }
 
 export interface Review {
