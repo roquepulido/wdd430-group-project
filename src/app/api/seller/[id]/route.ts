@@ -7,7 +7,9 @@ const pool = new Pool({
 });
 
 // GET /api/seller/[id]?byUser=true - Get seller info by seller id or user id
-export async function GET(req: NextRequest, props: {
+export async function GET(
+  req: NextRequest, 
+  props: {
   readonly params: Promise<{ id: string }>;
 }) {
   const { id } = await props.params;
@@ -41,8 +43,12 @@ export async function GET(req: NextRequest, props: {
 }
 
 // PUT /api/seller/[id] - Update seller info
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = await params;
+export async function PUT(
+  req: NextRequest, 
+  props: {
+  readonly params: Promise<{ id: string }>;
+}) {
+  const { id } = await props.params;
   const { fullName, shopName, description, image } = await req.json();
   try {
     const client = await pool.connect();
