@@ -45,7 +45,6 @@ export default function SellerDashboard() {
         // @ts-expect-error session.user is not typed
         prod.is_available = prod.isAvailable ?? false;
         if (prod.id && prod.id !== 0) {
-            console.log("Product to create:", prod);
             // edit
             const res = await fetch(`/api/products?id=${prod.id}`, {
                 method: 'PUT',
@@ -57,7 +56,6 @@ export default function SellerDashboard() {
             }
         } else {
             // create
-            console.log("Product to create:", prod);
             const res = await fetch('/api/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

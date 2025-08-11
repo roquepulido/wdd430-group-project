@@ -33,6 +33,7 @@ export interface ProductDetail{
 }
 
 export interface Review {
+    id: number;
     user: string;
     rating: number;
     comment: string;

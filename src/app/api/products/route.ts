@@ -78,7 +78,6 @@ export async function POST(req: NextRequest) {
       [body.name, body.price, body.image, body.description, body.category, 0, body.stock || 0, body.is_available ?? false, body.seller_id]
     );
     const product = result.rows[0];
-    console.log("Product created:", product);
     const productId = product.id;
     // Dimensiones
     if (body.dimensions) {
@@ -87,11 +86,9 @@ export async function POST(req: NextRequest) {
          VALUES ($1, $2, $3, $4)`,
         [productId, body.dimensions.width, body.dimensions.height, body.dimensions.depth]
       );
-      console.log("Dimensions added:", body.dimensions);
     }
     // Tags
     if (body.tags && Array.isArray(body.tags)) {
-        console.log("Tags to add:", body.tags);
       for (const tag of body.tags) {
         // Inserta tag si no existe
         const tagRes = await client.query(
@@ -103,12 +100,10 @@ export async function POST(req: NextRequest) {
           `INSERT INTO handcrafted_haven.product_tags (product_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
           [productId, tagId]
         );
-        console.log("Tag added:", tag, " with ID:", tagId, " for product ID:", productId);
       }
     }
     // Materials
     if (body.materials && Array.isArray(body.materials)) {
-        console.log("Materials to add:", body.materials);
       for (const mat of body.materials) {
         // Inserta material si no existe
         const matRes = await client.query(
@@ -120,7 +115,6 @@ export async function POST(req: NextRequest) {
           `INSERT INTO handcrafted_haven.product_materials (product_id, material_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
           [productId, matId]
         );
-        console.log("Material added:", mat, " with ID:", matId, " for product ID:", productId);
       }
     }
     await client.query('COMMIT');

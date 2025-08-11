@@ -37,7 +37,7 @@ export async function GET(
     }
     return NextResponse.json(result.rows[0]);
   } catch (err) {
-      console.log("Error fetching seller info:", err);
+      console.error("Error fetching seller info:", err);
     return NextResponse.json({ error: "Error fetching seller info" }, { status: 500 });
   }
 }

@@ -17,7 +17,6 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
 
     useEffect(() => {
         if (product) {
-            console.log("ProductModalSeller useEffect", product);
             setForm(product);
         } else setForm(blankProductDetail);
         setImageFile(null);

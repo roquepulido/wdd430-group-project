@@ -41,25 +41,21 @@ export default function ProductsPage() {
       .then((res) => res.json())
       .then(res => {
         setProducts(res);
-        console.log("Fetched products:", res);
       });
     fetch("/api/products/categories")
       .then((res) => res.json())
       .then((cats) => {
         setCategories(["All", ...cats]);
-        console.log("Fetched categories:", cats);
       });
     fetch("/api/products/materials")
       .then((res) => res.json())
       .then((materials) => {
         setMaterials(materials);
-        console.log("Fetched materials:", materials);
       });
     fetch("/api/products/tags")
       .then((res) => res.json())
       .then((tags) => {
         setTags(tags);
-        console.log("Fetched tags:", tags);
       });
   }, []);
 
