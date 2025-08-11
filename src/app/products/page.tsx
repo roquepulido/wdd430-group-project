@@ -18,14 +18,13 @@ export default function ProductsPage() {
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState(100);
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
   // Actualizar el precio máximo cuando se cargan los productos
   useEffect(() => {
     if (products.length > 0) {
       const max = Math.max(...products.map(p => p.price));
       setMaxPrice(max);
-      // Si el rango actual es mayor al nuevo max, ajusta
-      setPriceRange(([min, currMax]) => [min, Math.min(currMax, max)]);
+      setPriceRange([0, max]);
     }
   }, [products]);
   const [selectedProduct, setSelectedProduct] =

@@ -5,7 +5,7 @@ import ProductReviews from "@/components/ui/ProductReviews";
 import ProductReviewForm from "@/components/ui/ProductReviewForm";
 import Image from "next/image";
 
-export default function ProductDetailModal({product, onClose}: { product: ProductDetail; onClose: () => void }) {
+export default function ProductDetailModal({product, onClose}: { readonly product: ProductDetail; readonly onClose: () => void }) {
     const {data: session} = useSession();
     const [reviews, setReviews] = useState(product.reviews || []);
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -13,7 +13,6 @@ export default function ProductDetailModal({product, onClose}: { product: Produc
             onClose();
         }
     };
-
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
              onClick={handleBackdropClick}>
@@ -31,16 +30,24 @@ export default function ProductDetailModal({product, onClose}: { product: Produc
                 <div className="mb-4">
                     <h3 className="font-bold text-[#6B4F3B] mb-2">Reviews & Ratings</h3>
                     <ProductReviews reviews={reviews}/>
-                    {session ? (
-                        <ProductReviewForm onSubmit={(review, rating) => {
-                            setReviews([
-                                ...reviews,
-                                {user: "Anonymous", rating, comment: review},
-                            ]);
-                        }}/>
-                    ) : (
-                        <div className="text-sm text-gray-500 mt-2">You must be logged in to leave a review.</div>
-                    )}
+                    {(() => {
+                        if (!session) {
+                            return <div className="text-sm text-gray-500 mt-2">You must be logged in to leave a review.</div>;
+                        }
+                        // Si el usuario logueado es el seller del producto, no puede dejar review
+                        // @ts-expect-error session.user is not typed
+                        if (session?.user?.sellerId == product.seller_id) {
+                            return <div className="text-sm text-gray-500 mt-2">You cannot review your own product.</div>;
+                        }
+                        return (
+                            <ProductReviewForm onSubmit={(review, rating) => {
+                                setReviews([
+                                    ...reviews,
+                                    {user: "Anonymous", rating, comment: review},
+                                ]);
+                            }}/>
+                        );
+                    })()}
                 </div>
             </div>
         </div>
