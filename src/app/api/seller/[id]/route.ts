@@ -7,8 +7,8 @@ const pool = new Pool({
 });
 
 // GET /api/seller/[id]?byUser=true - Get seller info by seller id or user id
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function GET(req: NextRequest,  { params }: { params: { id: number } }) {
+  const { id } = params;
   const { searchParams } = new URL(req.url!);
   const byUser = searchParams.get('byUser');
   try {
