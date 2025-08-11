@@ -11,7 +11,6 @@ export default function ProductDetailModal({product, onClose}: {
 }) {
     const {data: session} = useSession();
     const [reviews, setReviews] = useState<Review[]>(product.reviews || []);
-    const [avgRating, setAvgRating] = useState<number>(product.rating || 0);
     const [hasReviewed, setHasReviewed] = useState<boolean>(false);
 
     // Load reviews from the endpoint
@@ -73,8 +72,6 @@ export default function ProductDetailModal({product, onClose}: {
                                         const reviewsRes = await fetch(`/api/products/${product.id}/reviews`);
                                         const reviewsData = await reviewsRes.json();
                                         setReviews(reviewsData);
-                                        const {avg} = await res.json();
-                                        setAvgRating(avg);
                                     }
                                 }}/>
                             );
