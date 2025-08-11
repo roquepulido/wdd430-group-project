@@ -7,7 +7,7 @@ import PillsInput from "@/components/ui/PillsInput";
 interface ProductModalProps {
     show: boolean;
     onClose: () => void;
-    onSubmit: (product: FormData) => void;
+    onSubmit: (product: ProductDetail) => void;
     product?: ProductDetail;
 }
 
@@ -99,7 +99,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        let productData = {...form};
+        let productData : ProductDetail = {...form};
         // Si es producto nuevo y hay imagen, súbela aquí
         if ((!product?.id || product?.id === 0) && imageFile) {
             let newImageUrl = '';
@@ -127,8 +127,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                 // setError((err as Error).message || 'Error uploading image');
             }
         }
-        // eslint-disable-line
-        if (onSubmit) onSubmit(productData as any); // Ajusta según tu backend
+        if (onSubmit) onSubmit(productData); 
         onClose();
     };
 

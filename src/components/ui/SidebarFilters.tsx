@@ -10,8 +10,8 @@ interface SidebarFiltersProps {
     readonly tags: string[];
     readonly selectedTags: string[];
     readonly setSelectedTags: (tags: React.SetStateAction<string[]>) => void;
-    readonly priceRange: number[];
-    readonly setPriceRange: (range: number[]) => void;
+    readonly priceRange: [number, number];
+    readonly setPriceRange: (range: [number, number]) => void;
     readonly search: string;
     readonly setSearch: (s: string) => void;
     readonly maxPrice: number;
