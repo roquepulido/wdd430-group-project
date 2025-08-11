@@ -10,6 +10,7 @@ export const blankSeller: Seller = {
     image: "",
 };
 export const blankReview: Review = {
+    id: 0,
     user: "",
     rating: 0,
     comment: "",
