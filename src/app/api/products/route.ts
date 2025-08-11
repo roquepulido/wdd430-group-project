@@ -56,6 +56,7 @@ export async function GET(req: NextRequest) {
     client.release();
     return NextResponse.json(products);
   } catch (err) {
+    console.error("Error fetching products:", err);
     return NextResponse.json({ error: "Error fetching products" }, { status: 500 });
   }
 }
@@ -122,6 +123,7 @@ export async function POST(req: NextRequest) {
     client.release();
     return NextResponse.json(product);
   } catch (err) {
+    console.error("Error creating product:", err);
     return NextResponse.json({ error: "Error creating product" }, { status: 500 });
   }
 }
@@ -183,6 +185,7 @@ export async function PUT(req: NextRequest) {
     client.release();
     return NextResponse.json({ ok: true });
   } catch (err) {
+    console.error("Error updating product:", err);
     return NextResponse.json({ error: "Error updating product" }, { status: 500 });
   }
 }
@@ -212,6 +215,7 @@ export async function DELETE(req: NextRequest) {
     }
     return NextResponse.json({ ok: true });
   } catch (err) {
+    console.error("Error deleting product:", err);
     return NextResponse.json({ error: "Error deleting product" }, { status: 500 });
   }
 }

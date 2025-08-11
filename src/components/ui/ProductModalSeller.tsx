@@ -14,7 +14,6 @@ interface ProductModalProps {
 const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmit, product}) => {
     const [form, setForm] = useState<ProductDetail>(blankProductDetail);
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [originalImage, setOriginalImage] = useState<string>("");
 
     useEffect(() => {
         if (product) {
@@ -23,12 +22,6 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
         } else setForm(blankProductDetail);
         setImageFile(null);
     }, [product, show]);
-
-    useEffect(() => {
-        if (form.image && typeof form.image === 'string' && !form.image.startsWith('blob:')) {
-            setOriginalImage(form.image);
-        }
-    }, [form.image]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string, value: unknown } }
@@ -71,7 +64,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
             setForm(prev => ({...prev, image: ''}));
         } else {
             // Producto existente: subir/cambiar al instante (como antes)
-            let prevImageUrl = form.image;
+            const prevImageUrl = form.image;
             let newImageUrl = "";
             try {
                 const ext = file.name.split('.').pop();
@@ -93,6 +86,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                     await fetch(`/api/blob?url=${encodeURIComponent(prevImageUrl)}`, {method: 'DELETE'});
                 }
             } catch (err) {
+                console.error("Error changing product image:", err);
                 if (newImageUrl) {
                     // Si la imagen nueva fue subida pero algo falló después, la borramos
                     await fetch(`/api/blob?url=${encodeURIComponent(newImageUrl)}`, {method: 'DELETE'});
@@ -107,7 +101,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
         e.preventDefault();
         let productData = {...form};
         // Si es producto nuevo y hay imagen, súbela aquí
-        if ((!product || !product.id || product.id === 0) && imageFile) {
+        if ((!product?.id || product?.id === 0) && imageFile) {
             let newImageUrl = '';
             try {
                 const ext = imageFile.name.split('.').pop();
@@ -124,6 +118,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                 }
                 productData = {...productData, image: newImageUrl};
             } catch (err) {
+                console.error("Error uploading image:", err);
                 // Si la imagen nueva fue subida pero algo falló después, la borramos
                 if (newImageUrl) {
                     await fetch(`/api/blob?url=${encodeURIComponent(newImageUrl)}`, {method: 'DELETE'});
@@ -132,6 +127,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                 // setError((err as Error).message || 'Error uploading image');
             }
         }
+        // eslint-disable-line
         if (onSubmit) onSubmit(productData as any); // Ajusta según tu backend
         onClose();
     };

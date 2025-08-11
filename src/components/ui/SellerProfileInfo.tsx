@@ -14,7 +14,7 @@ export default function SellerProfileInfo({profile, setProfile}: SellerProfileIn
   const handleImageChange = async (file: File) => {
     debugger
     if (!file) return;
-    let imageStorageURL = profile.image;
+    const imageStorageURL = profile.image;
     let newUrlStorageURL = "";
     try {
       const ext = file.name.split(".").pop();
