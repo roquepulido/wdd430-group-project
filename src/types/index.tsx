@@ -30,6 +30,7 @@ export interface ProductDetail{
     };
     materials?: string[];
     shopName?: string;
+    reviewsLength?: number;
 }
 
 export interface Review {

@@ -1,13 +1,29 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {useSession} from "next-auth/react";
-import {ProductDetail} from "@/types";
+import {ProductDetail, Review} from "@/types";
 import ProductReviews from "@/components/ui/ProductReviews";
 import ProductReviewForm from "@/components/ui/ProductReviewForm";
 import Image from "next/image";
 
-export default function ProductDetailModal({product, onClose}: { readonly product: ProductDetail; readonly onClose: () => void }) {
+export default function ProductDetailModal({product, onClose}: {
+    readonly product: ProductDetail;
+    readonly onClose: () => void
+}) {
     const {data: session} = useSession();
-    const [reviews, setReviews] = useState(product.reviews || []);
+    const [reviews, setReviews] = useState<Review[]>(product.reviews || []);
+    const [avgRating, setAvgRating] = useState<number>(product.rating || 0);
+    const [hasReviewed, setHasReviewed] = useState<boolean>(false);
+
+    // Cargar reviews desde el endpoint
+    useEffect(() => {
+        fetch(`/api/products/${product.id}/reviews`)
+            .then(res => res.json())
+            .then(data => {
+                setReviews(data);
+                setHasReviewed(session && data.some((r:Review) => r.user === session.user?.name))
+            });
+    }, [product.id]);
+
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
             onClose();
@@ -23,7 +39,8 @@ export default function ProductDetailModal({product, onClose}: { readonly produc
                 >
                     ×
                 </button>
-                <Image src={product.image}  width={500} height={300} alt={product.name} className="w-full h-56 object-cover rounded mb-4"/>
+                <Image src={product.image} width={500} height={300} alt={product.name}
+                       className="w-full h-56 object-cover rounded mb-4"/>
                 <h2 className="text-2xl font-bold text-[#6B4F3B] mb-2">{product.name}</h2>
                 <p className="text-[#6B4F3B] mb-2">${product.price}</p>
                 <p className="mb-4">{product.description}</p>
@@ -32,21 +49,36 @@ export default function ProductDetailModal({product, onClose}: { readonly produc
                     <ProductReviews reviews={reviews}/>
                     {(() => {
                         if (!session) {
-                            return <div className="text-sm text-gray-500 mt-2">You must be logged in to leave a review.</div>;
+                            return <div className="text-sm text-gray-500 mt-2">You must be logged in to leave a
+                                review.</div>;
                         }
                         // Si el usuario logueado es el seller del producto, no puede dejar review
                         // @ts-expect-error session.user is not typed
                         if (session?.user?.sellerId == product.seller_id) {
-                            return <div className="text-sm text-gray-500 mt-2">You cannot review your own product.</div>;
+                            return <div className="text-sm text-gray-500 mt-2">You cannot review your own
+                                product.</div>;
                         }
-                        return (
-                            <ProductReviewForm onSubmit={(review, rating) => {
-                                setReviews([
-                                    ...reviews,
-                                    {user: "Anonymous", rating, comment: review},
-                                ]);
-                            }}/>
-                        );
+                        if (!hasReviewed) {
+                            return (
+                                <ProductReviewForm onSubmit={async (review, rating) => {
+                                    // Guardar review en el backend
+                                    const res = await fetch(`/api/products/${product.id}/reviews`, {
+                                        method: "POST",
+                                        headers: {"Content-Type": "application/json"},
+                                        // @ts-expect-error session.user is not typed
+                                        body: JSON.stringify({user: session.user.sellerId, rating, comment: review})
+                                    });
+                                    if (res.ok) {
+                                        // Recargar reviews y rating promedio
+                                        const reviewsRes = await fetch(`/api/products/${product.id}/reviews`);
+                                        const reviewsData = await reviewsRes.json();
+                                        setReviews(reviewsData);
+                                        const {avg} = await res.json();
+                                        setAvgRating(avg);
+                                    }
+                                }}/>
+                            );
+                        }
                     })()}
                 </div>
             </div>

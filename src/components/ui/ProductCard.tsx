@@ -37,7 +37,7 @@ export default function ProductCard({
         <div className="flex items-center gap-2 mt-2">
           <ProductRating
             rating={product.rating}
-            reviewsCount={product.reviews?.length || 0}
+            reviewsCount={product.reviewsLength ?? 0}
           />
         </div>
       </div>

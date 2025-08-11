@@ -56,6 +56,12 @@ export async function GET(req: NextRequest) {
         [product.id]
       );
       product.materials = matRes.rows.map(r => r.name);
+        // Reviews
+        const reviewRes = await client.query(
+            `SELECT COUNT(*) as count FROM handcrafted_haven.reviews WHERE product_id = $1`,
+            [product.id]
+            );
+        product.reviewsLength = parseInt(reviewRes.rows[0].count, 10);
     }
     client.release();
     return NextResponse.json(products);
