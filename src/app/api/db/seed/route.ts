@@ -11,9 +11,9 @@ export async function POST() {
   try {
     const client = await pool.connect();
     try {
-      // Crea un usuario administrador de ejemplo
+  // Create a sample admin user
       const passwordHash = await bcrypt.hash('admin123', 10);
-      // Inserta el usuario y obtiene su id
+      
       const userResult = await client.query(
         `INSERT INTO handcrafted_haven.users (email, password_hash, role)
          VALUES ($1, $2, $3)
@@ -22,7 +22,6 @@ export async function POST() {
         ['admin@handcrafted.com', passwordHash, 'admin']
       );
       const userId = userResult.rows[0].id;
-      // Inserta el seller relacionado con el usuario
       await client.query(
         `INSERT INTO handcrafted_haven.sellers (user_id, full_name, shop_name, description, image)
          VALUES ($1, $2, $3, $4, $5)

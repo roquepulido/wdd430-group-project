@@ -7,7 +7,7 @@ export async function POST() {
   });
   await client.connect();
 
-  // Elimina primero las tablas dependientes para reconstrucción limpia
+  // First delete dependent tables for a clean rebuild
   await client.query(`
     DROP TABLE IF EXISTS handcrafted_haven.product_dimensions CASCADE;
     DROP TABLE IF EXISTS handcrafted_haven.product_materials CASCADE;
@@ -20,7 +20,7 @@ export async function POST() {
     DROP TABLE IF EXISTS handcrafted_haven.users CASCADE;
   `);
 
-  // Crea la tabla de usuarios para autenticación
+  // Create the users table for authentication
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.users (
       id SERIAL PRIMARY KEY,
@@ -32,7 +32,7 @@ export async function POST() {
     );
   `);
 
-  // Crea la tabla de sellers relacionada con users
+  // Create the sellers table related to users
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.sellers (
       id SERIAL PRIMARY KEY,
@@ -46,7 +46,7 @@ export async function POST() {
     );
   `);
 
-  // Crea la tabla de products
+  // Create the products table
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.products (
       id SERIAL PRIMARY KEY,
@@ -64,7 +64,7 @@ export async function POST() {
     );
   `);
 
-  // Crea la tabla de reviews relacionada con users
+  // Create the reviews table related to users
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.reviews (
       id SERIAL PRIMARY KEY,
@@ -76,7 +76,7 @@ export async function POST() {
     );
   `);
 
-  // Crea la tabla de tags
+  // Create the tags table
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.tags (
       id SERIAL PRIMARY KEY,
@@ -84,7 +84,7 @@ export async function POST() {
     );
   `);
 
-  // Relación muchos a muchos: products <-> tags
+  // Many-to-many relationship: products <-> tags
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.product_tags (
       product_id INT REFERENCES handcrafted_haven.products(id) ON DELETE CASCADE,
@@ -93,7 +93,7 @@ export async function POST() {
     );
   `);
 
-  // Crea la tabla de materiales
+  // Create the materials table
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.materials (
       id SERIAL PRIMARY KEY,
@@ -101,7 +101,7 @@ export async function POST() {
     );
   `);
 
-  // Relación muchos a muchos: products <-> materials
+  // Many-to-many relationship: products <-> materials
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.product_materials (
       product_id INT REFERENCES handcrafted_haven.products(id) ON DELETE CASCADE,
@@ -110,7 +110,7 @@ export async function POST() {
     );
   `);
 
-  // Crea la tabla de dimensiones
+  // Create the dimensions table
   await client.query(`
     CREATE TABLE IF NOT EXISTS handcrafted_haven.product_dimensions (
       product_id INT PRIMARY KEY REFERENCES handcrafted_haven.products(id) ON DELETE CASCADE,
@@ -121,5 +121,5 @@ export async function POST() {
   `);
 
   await client.end();
-  return NextResponse.json({ ok: true, message: "Tablas creadas correctamente en handcrafted_haven" });
+  return NextResponse.json({ ok: true, message: "Tables created successfully in handcrafted_haven" });
 }

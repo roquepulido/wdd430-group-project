@@ -44,7 +44,7 @@ export default function SellerProfileInfo({profile, setProfile}: SellerProfileIn
       }
     } catch (err) {
       if (newUrlStorageURL) {
-        // Si la imagen nueva fue subida pero algo falló después, la borramos
+  // If the new image was uploaded but something failed afterwards, delete it
         await fetch(`/api/blob?url=${encodeURIComponent(newUrlStorageURL)}`, {
           method: "DELETE",
         });

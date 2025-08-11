@@ -6,7 +6,7 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
-// GET: Obtener reviews de un producto
+// GET: Get product reviews
 export async function GET(
     req: NextRequest, 
     props: {
@@ -31,7 +31,7 @@ export async function GET(
   }
 }
 
-// POST: Guardar un nuevo review y actualizar el rating promedio
+// POST: Save a new review and update the average rating
 export async function POST(
     req: NextRequest, 
     context: { 
@@ -45,13 +45,13 @@ export async function POST(
       `INSERT INTO handcrafted_haven.reviews (product_id, user_id, rating, comment, created_at) VALUES ($1, $2, $3, $4, NOW())`,
       [id, user, rating, comment]
     );
-    // Calcular el nuevo promedio
+  // Calculate the new average
     const avgRes = await client.query(
       `SELECT AVG(rating)::float as avg FROM handcrafted_haven.reviews WHERE product_id = $1`,
       [id]
     );
     const avg = avgRes.rows[0]?.avg || 0;
-    // Actualizar el rating del producto
+  // Update the product rating
     await client.query(
       `UPDATE handcrafted_haven.products SET rating = $1 WHERE id = $2`,
       [avg, id]

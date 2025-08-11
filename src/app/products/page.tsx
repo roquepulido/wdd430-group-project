@@ -19,7 +19,7 @@ export default function ProductsPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState(100);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100]);
-  // Actualizar el precio máximo cuando se cargan los productos
+    // Update max price when products are loaded
   useEffect(() => {
     if (products.length > 0) {
       const max = Math.max(...products.map(p => p.price));

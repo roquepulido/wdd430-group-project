@@ -35,7 +35,7 @@ export default function SidebarFilters(props: SidebarFiltersProps) {
     maxPrice,
     } = props;
 
-    // Refactorizar handlers para reducir anidación
+    // Refactor handlers to reduce nesting
     const handleCategoryChange = (cat: string) => {
         if (cat === "All") {
             setSelectedCategories(["All"]);
@@ -95,7 +95,7 @@ export default function SidebarFilters(props: SidebarFiltersProps) {
                     ))}
                 </ul>
             </div>
-            {/* Filtro de materiales */}
+            {/* Material filter */}
             <div>
                 <h2 className="font-bold text-lg mb-2 text-[#6B4F3B]">Materials</h2>
                 <ul className="space-y-2">
@@ -114,7 +114,7 @@ export default function SidebarFilters(props: SidebarFiltersProps) {
                     ))}
                 </ul>
             </div>
-            {/* Filtro de tags */}
+            {/* Tags filter */}
             <div>
                 <h2 className="font-bold text-lg mb-2 text-[#6B4F3B]">Tags</h2>
                 <ul className="space-y-2">

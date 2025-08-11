@@ -14,7 +14,7 @@ export default function ProductDetailModal({product, onClose}: {
     const [avgRating, setAvgRating] = useState<number>(product.rating || 0);
     const [hasReviewed, setHasReviewed] = useState<boolean>(false);
 
-    // Cargar reviews desde el endpoint
+    // Load reviews from the endpoint
     useEffect(() => {
         fetch(`/api/products/${product.id}/reviews`)
             .then(res => res.json())
@@ -52,7 +52,7 @@ export default function ProductDetailModal({product, onClose}: {
                             return <div className="text-sm text-gray-500 mt-2">You must be logged in to leave a
                                 review.</div>;
                         }
-                        // Si el usuario logueado es el seller del producto, no puede dejar review
+                        // If the logged-in user is the seller of the product, they cannot leave a review
                         // @ts-expect-error session.user is not typed
                         if (session?.user?.sellerId == product.seller_id) {
                             return <div className="text-sm text-gray-500 mt-2">You cannot review your own
@@ -61,7 +61,7 @@ export default function ProductDetailModal({product, onClose}: {
                         if (!hasReviewed) {
                             return (
                                 <ProductReviewForm onSubmit={async (review, rating) => {
-                                    // Guardar review en el backend
+                                    // Save review in the backend
                                     const res = await fetch(`/api/products/${product.id}/reviews`, {
                                         method: "POST",
                                         headers: {"Content-Type": "application/json"},
@@ -69,7 +69,7 @@ export default function ProductDetailModal({product, onClose}: {
                                         body: JSON.stringify({user: session.user.sellerId, rating, comment: review})
                                     });
                                     if (res.ok) {
-                                        // Recargar reviews y rating promedio
+                                        // Reload reviews and average rating
                                         const reviewsRes = await fetch(`/api/products/${product.id}/reviews`);
                                         const reviewsData = await reviewsRes.json();
                                         setReviews(reviewsData);

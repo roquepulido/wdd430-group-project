@@ -8,7 +8,7 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
-// GET /api/products - Obtener todos los productos disponibles
+// GET /api/products - 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url!);
   const sellerId = searchParams.get('sellerId');
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const client = await pool.connect();
     let result;
     if (sellerId) {
-      // Obtener productos de un seller específico, incluyendo shopName
+      // Get products from a specific seller, including shopName
       result = await client.query(
         `SELECT p.*, s.shop_name as "shopName" FROM handcrafted_haven.products p
          JOIN handcrafted_haven.sellers s ON s.id = p.seller_id
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
         [sellerId]
       );
     } else {
-      // Obtener todos los productos disponibles, incluyendo shopName
+      // Get all available products, including shopName
       result = await client.query(
         `SELECT p.*, s.shop_name as "shopName" FROM handcrafted_haven.products p
          JOIN handcrafted_haven.sellers s ON s.id = p.seller_id
@@ -32,9 +32,9 @@ export async function GET(req: NextRequest) {
       );
     }
     const products = result.rows;
-    // Obtener detalles adicionales para cada producto
+    // Get additional details for each product
     for (const product of products) {
-      // Dimensiones
+      // Dimensions
       const dimRes = await client.query(
         `SELECT width, height, depth FROM handcrafted_haven.product_dimensions WHERE product_id = $1`,
         [product.id]
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
         [product.id]
       );
       product.tags = tagRes.rows.map(r => r.name);
-      // Materiales
+      // Materials
       const matRes = await client.query(
         `SELECT m.name FROM handcrafted_haven.materials m
          JOIN handcrafted_haven.product_materials pm ON pm.material_id = m.id
@@ -71,13 +71,12 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST /api/products - Crear un nuevo producto
+// POST /api/products
 export async function POST(req: NextRequest) {
   const body: ProductDB = await req.json();
   try {
     const client = await pool.connect();
     await client.query('BEGIN');
-    // Insertar producto principal
     const result = await client.query(
       `INSERT INTO handcrafted_haven.products (name, price, image, description, category, rating, stock, is_available, seller_id, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW()) RETURNING *`,
@@ -85,7 +84,7 @@ export async function POST(req: NextRequest) {
     );
     const product = result.rows[0];
     const productId = product.id;
-    // Dimensiones
+    // Dimensions
     if (body.dimensions) {
       await client.query(
         `INSERT INTO handcrafted_haven.product_dimensions (product_id, width, height, depth)
@@ -96,7 +95,7 @@ export async function POST(req: NextRequest) {
     // Tags
     if (body.tags && Array.isArray(body.tags)) {
       for (const tag of body.tags) {
-        // Inserta tag si no existe
+        // Insert tag if it doesn't exist
         const tagRes = await client.query(
           `INSERT INTO handcrafted_haven.tags (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name=EXCLUDED.name RETURNING id`,
           [tag]
@@ -111,7 +110,7 @@ export async function POST(req: NextRequest) {
     // Materials
     if (body.materials && Array.isArray(body.materials)) {
       for (const mat of body.materials) {
-        // Inserta material si no existe
+        // Insert material if it doesn't exist
         const matRes = await client.query(
           `INSERT INTO handcrafted_haven.materials (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name=EXCLUDED.name RETURNING id`,
           [mat]
@@ -132,7 +131,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PUT /api/products?id= - Actualizar producto por id
+// PUT /api/products?id=
 export async function PUT(req: NextRequest) {
   const { searchParams } = new URL(req.url!);
   const id = searchParams.get('id');
@@ -145,7 +144,7 @@ export async function PUT(req: NextRequest) {
       `UPDATE handcrafted_haven.products SET name = $1, price = $2, image = $3, description = $4, category = $5, rating = $6, stock = $7, is_available = $8, updated_at = NOW() WHERE id = $9`,
       [body.name, body.price, body.image, body.description, body.category, body.rating, body.stock, body.is_available, id]
     );
-    // Dimensiones
+    // Dimensions
     if (body.dimensions) {
       await client.query(
         `INSERT INTO handcrafted_haven.product_dimensions (product_id, width, height, depth)
@@ -156,7 +155,6 @@ export async function PUT(req: NextRequest) {
     }
     // Tags
     if (body.tags && Array.isArray(body.tags)) {
-      // Borra tags actuales
       await client.query(`DELETE FROM handcrafted_haven.product_tags WHERE product_id = $1`, [id]);
       for (const tag of body.tags) {
         const tagRes = await client.query(
@@ -194,26 +192,26 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// DELETE /api/products?id= - Eliminar producto por id
+// DELETE /api/products?id=
 export async function DELETE(req: NextRequest) {
   const { searchParams } = new URL(req.url!);
   const id = searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'Product id required' }, { status: 400 });
   try {
     const client = await pool.connect();
-    // Obtener la URL de la imagen antes de borrar el producto
+    // Get the image URL before deleting the product
     const imgRes = await client.query(
       `SELECT image FROM handcrafted_haven.products WHERE id = $1`,
       [id]
     );
     const imageUrl = imgRes.rows[0]?.image;
-    // Eliminar el producto
+    // Delete the product
     await client.query(
       `DELETE FROM handcrafted_haven.products WHERE id = $1`,
       [id]
     );
     client.release();
-    // Si hay imagen, eliminarla del blobStorage
+    // If there's an image, delete it from blobStorage
     if (imageUrl) {
         await del(imageUrl);
     }

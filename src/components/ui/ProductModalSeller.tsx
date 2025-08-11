@@ -54,15 +54,15 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
         }
     };
 
-    // Cambia la lógica: si es nuevo producto, solo guarda el file en state; si es update, sube/cambia al instante
+    // Change logic: if it's a new product, just save the file in state; if it's an update, upload/change instantly
     const handleImageChange = async (file: File) => {
         if (!file) return;
         if (!product?.id || product.id === 0) {
-            // Producto nuevo: solo guarda el file, la imagen se sube al submit
+            // New product: just save the file, image is uploaded on submit
             setImageFile(file);
             setForm(prev => ({...prev, image: ''}));
         } else {
-            // Producto existente: subir/cambiar al instante (como antes)
+            // Existing product: upload/change instantly (as before)
             const prevImageUrl = form.image;
             let newImageUrl = "";
             try {
@@ -80,17 +80,17 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                 }
                 setForm(prev => ({...prev, image: newImageUrl}));
                 setImageFile(file);
-                // Si hay imagen previa, la borramos después de subir la nueva
+                // If there is a previous image, delete it after uploading the new one
                 if (prevImageUrl && !prevImageUrl.startsWith('blob:')) {
                     await fetch(`/api/blob?url=${encodeURIComponent(prevImageUrl)}`, {method: 'DELETE'});
                 }
             } catch (err) {
                 console.error("Error changing product image:", err);
                 if (newImageUrl) {
-                    // Si la imagen nueva fue subida pero algo falló después, la borramos
+                    // If the new image was uploaded but something failed afterwards, delete it
                     await fetch(`/api/blob?url=${encodeURIComponent(newImageUrl)}`, {method: 'DELETE'});
                 }
-                // Opcional: podrías mostrar un error al usuario
+                // Optional: you could show an error to the user
                 // setError((err as Error).message || "Error uploading image");
             }
         }
@@ -99,7 +99,7 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         let productData : ProductDetail = {...form};
-        // Si es producto nuevo y hay imagen, súbela aquí
+    // If it's a new product and there is an image, upload it here
         if ((!product?.id || product?.id === 0) && imageFile) {
             let newImageUrl = '';
             try {
@@ -118,11 +118,11 @@ const ProductModalSeller: React.FC<ProductModalProps> = ({show, onClose, onSubmi
                 productData = {...productData, image: newImageUrl};
             } catch (err) {
                 console.error("Error uploading image:", err);
-                // Si la imagen nueva fue subida pero algo falló después, la borramos
+                // If the new image was uploaded but something failed afterwards, delete it
                 if (newImageUrl) {
                     await fetch(`/api/blob?url=${encodeURIComponent(newImageUrl)}`, {method: 'DELETE'});
                 }
-                // Opcional: podrías mostrar un error al usuario
+                // Optional: you could show an error to the user
                 // setError((err as Error).message || 'Error uploading image');
             }
         }
